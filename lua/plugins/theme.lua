@@ -1,7 +1,7 @@
 return {
   {
-    'catppuccin/nvim',
-    name = 'catppuccin',
+    "catppuccin/nvim",
+    name = "catppuccin",
     priority = 1000,
     lazy = false,
     config = function()
@@ -22,51 +22,51 @@ return {
           mason = true,
           neotree = true,
           telescope = true,
-          lsp_trouble = true
+          lsp_trouble = true,
         },
-        flavour = "mocha"
+        flavour = "mocha",
       })
       vim.cmd.colorscheme("catppuccin")
-    end
+    end,
   },
   {
     -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
+    "nvim-lualine/lualine.nvim",
     lazy = false,
-    after = 'catppuccin',
+    after = "catppuccin",
     dependencies = {
-      'nvim-tree/nvim-web-devicons'
+      "nvim-tree/nvim-web-devicons",
     },
     -- See `:help lualine.txt`
     opts = {
       options = {
-        icons_enabled      = true,
-        theme              = 'catppuccin',
-        section_separators = { left = '', right = '' },
-        disabled_filetypes = { 'packer', 'neo-tree' },
-        globalstatus       = true
+        icons_enabled = true,
+        theme = "catppuccin",
+        section_separators = { left = "", right = "" },
+        disabled_filetypes = { "packer", "neo-tree" },
+        globalstatus = true,
       },
-      extensions = { 'nvim-tree' }
-    }
+      extensions = { "nvim-tree" },
+    },
   },
   {
-    'akinsho/bufferline.nvim',
+    "akinsho/bufferline.nvim",
     lazy = false,
-    version = '*',
+    version = "*",
     dependencies = {
-      "nvim-tree/nvim-web-devicons"
+      "nvim-tree/nvim-web-devicons",
     },
-    after = 'catpuccin',
+    after = "catpuccin",
     config = function()
-      require('bufferline').setup {
+      require("bufferline").setup({
         options = {
-          mode = 'buffers',
-          separator_style = 'slant',
-          diagnostics = 'nvim_lsp',
+          mode = "buffers",
+          separator_style = "slant",
+          diagnostics = "nvim_lsp",
           hover = {
             enabled = true,
             delay = 100,
-            reveal = { 'close', }
+            reveal = { "close" },
           },
           offsets = {
             {
@@ -74,26 +74,26 @@ return {
               text = "File Explorer",
               highlight = "Directory",
               separator = true,
-              text_align = "left"
-            }
-          }
+              text_align = "left",
+            },
+          },
         },
-        highlights = require('catppuccin.groups.integrations.bufferline').get(),
-      }
-    end
+        highlights = require("catppuccin.groups.integrations.bufferline").get(),
+      })
+    end,
   },
   {
-    'nvim-neo-tree/neo-tree.nvim',
+    "nvim-neo-tree/neo-tree.nvim",
     lazy = false,
-    branch = 'v3.x',
+    branch = "v3.x",
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-tree/nvim-web-devicons',
-      'MunifTanjim/nui.nvim'
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+      "MunifTanjim/nui.nvim",
     },
-    after = 'catppuccin',
+    after = "catppuccin",
     config = function()
-      require('neo-tree').setup {}
+      require("neo-tree").setup({})
     end,
   },
 }

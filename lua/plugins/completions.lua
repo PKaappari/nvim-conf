@@ -19,9 +19,9 @@ return {
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",
-      -- "hrsh7th/cmp-path",
-      -- "hrsh7th/cmp-cmdline",
-      -- "hrsh7th/cmp-nvim-lsp-document-symbol",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-nvim-lsp-document-symbol",
       {
         "David-Kunz/cmp-npm",
         dependencies = { "nvim-lua/plenary.nvim" },
@@ -78,8 +78,28 @@ return {
           { name = "nvim_lsp" },
           { name = "luasnip" },
           { name = "npm" },
+          { name = "path" },
         }, {
           { name = "buffer" },
+        }),
+      })
+      cmp.setup.cmdline({ "/", "?" }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = "buffer" },
+        },
+      })
+      cmp.setup.cmdline(":", {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = "path" },
+        }, {
+          {
+            name = "cmdline",
+            option = {
+              ignore_cmds = { "Man", "!" },
+            },
+          },
         }),
       })
     end,

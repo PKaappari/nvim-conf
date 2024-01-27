@@ -93,3 +93,5 @@ end, { desc = "[T]rouble move to [f]irst" })
 vim.keymap.set("n", "<leader>tl", function()
   require("trouble").last({ skip_groups = true, jump = true })
 end, { desc = "[T]rouble move to [l]ast" })
+
+vim.keymap.set("n", "<leader>gg", vim.cmd.LazyGit, { desc = "LazyGit" })

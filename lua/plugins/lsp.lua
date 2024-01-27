@@ -11,7 +11,7 @@ return {
     config = function()
       local lsp = require("mason-lspconfig")
       lsp.setup({
-        ensure_installed = { "lua_ls", "tsserver", "jsonls" },
+        ensure_installed = { "lua_ls", "tsserver", "jsonls", "rust_analyzer" },
         automatic_installation = true,
       })
     end,
@@ -107,28 +107,6 @@ return {
           end
         end,
       })
-      --
-      -- for server_name, value in pairs(servers) do
-      --   if server_name == "tsserver" then
-      --     lspconfig[server_name].setup({
-      --       capabilities = capabilities,
-      --       settings = value.settings,
-      --       on_attach = on_attach,
-      --       commands = {
-      --         OrganizeImports = {
-      --           organize_imports,
-      --           description = "Organize imports",
-      --         },
-      --       },
-      --     })
-      --   else
-      --     lspconfig[server_name].setup({
-      --       capabilities = capabilities,
-      --       settings = value.settings,
-      --       on_attach = on_attach,
-      --     })
-      --   end
-      -- end
     end,
   },
 }
