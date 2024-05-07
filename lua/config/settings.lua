@@ -19,6 +19,29 @@ vim.o.mouse = "a"
 --  See `:help 'clipboard'`
 -- vim.o.clipboard = 'unnamedplus'
 
+-- WSL clipboard integration
+local in_wsl = os.getenv("WSL_DISTRO_NAME") ~= nil
+
+if in_wsl then
+  vim.api.nvim_exec(
+    [[
+      let g:clipboard = {
+        \   'name': 'win32yank-wsl',
+        \   'copy': {
+        \      '+': 'win32yank.exe -i --crlf',
+        \      '*': 'win32yank.exe -i --crlf',
+        \    },
+        \   'paste': {
+        \      '+': 'win32yank.exe -o --lf',
+        \      '*': 'win32yank.exe -o --lf',
+        \   },
+        \   'cache_enabled': 0,
+        \ }
+    ]],
+    true
+  )
+end
+
 -- Enable break indent
 vim.o.breakindent = true
 
@@ -58,5 +81,13 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   command = "OrganizeImports",
   group = vim.api.nvim_create_augroup("JsFormattingCommands", { clear = false }),
 })
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.tsx", "*.ts", "*.js", "*.jsx" },
+  command = "",
+  group = vim.api.nvim_create_augroup("JsFormattingCommands", { clear = false }),
+})
+
+
 
 vim.o.guicursor = "i:ver1,a:blinkon1"
