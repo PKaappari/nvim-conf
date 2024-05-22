@@ -12,7 +12,24 @@ return {
       local lsp = require("mason-lspconfig")
       lsp.setup({
         ensure_installed = { "lua_ls", "tsserver", "jsonls", "rust_analyzer" },
+      })
+    end,
+  },
+  {
+    "jay-babu/mason-null-ls.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      local null_ls = require("null-ls")
+
+      require("mason-null-ls").setup({
+        ensure_installed = { "stylua", "prettierd", "refactoring" },
         automatic_installation = true,
+        handlers = {},
+      })
+      null_ls.setup({
+        sources = {
+          null_ls.builtins.code_actions.refactoring,
+        },
       })
     end,
   },

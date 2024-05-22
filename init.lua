@@ -37,7 +37,7 @@ require("lazy").setup({ { import = "plugins" } }, {
   },
 })
 
-vim.cmd.colorscheme = "catppuccin"
+-- vim.cmd.colorscheme = "catppuccin"
 
 require("config.settings")
 require("config.keymaps")

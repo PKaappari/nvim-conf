@@ -1,5 +1,6 @@
 return {
   { 'nvim-telescope/telescope-ui-select.nvim' },
+  { 'jvgrootveld/telescope-zoxide'},
   {
     "nvim-telescope/telescope.nvim",
     branch = "0.1.x",
@@ -24,10 +25,11 @@ return {
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown {}
-          }
+          },
         }
       }
       telescope.load_extension('ui-select')
+      telescope.load_extension('zoxide')
     end
   },
 }
