@@ -1,6 +1,6 @@
 return {
-  { 'nvim-telescope/telescope-ui-select.nvim' },
-  { 'jvgrootveld/telescope-zoxide'},
+  { "nvim-telescope/telescope-ui-select.nvim" },
+  { "jvgrootveld/telescope-zoxide" },
   {
     "nvim-telescope/telescope.nvim",
     branch = "0.1.x",
@@ -20,16 +20,17 @@ return {
       },
     },
     config = function()
-      local telescope = require('telescope')
-      telescope.setup {
+      local telescope = require("telescope")
+      telescope.setup({
         extensions = {
-          ['ui-select'] = {
-            require('telescope.themes').get_dropdown {}
+          ["ui-select"] = {
+            require("telescope.themes").get_dropdown({}),
           },
-        }
-      }
-      telescope.load_extension('ui-select')
-      telescope.load_extension('zoxide')
-    end
+        },
+      })
+      telescope.load_extension("ui-select")
+      telescope.load_extension("zoxide")
+      telescope.load_extension("fzf")
+    end,
   },
 }

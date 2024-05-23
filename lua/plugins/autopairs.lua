@@ -33,6 +33,7 @@ return {
           enable_rename = true,
           enable_close = true,
         },
+        did_setup = true,
       })
     end,
   },
