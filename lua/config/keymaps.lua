@@ -28,8 +28,8 @@ vim.keymap.set("n", "<C-l>", ":bn<CR>", { desc = "Move to next buffer", silent =
 vim.keymap.set("n", "<C-h>", ":bp<CR>", { desc = "Move to previous buffer", silent = true })
 vim.keymap.set("n", "<leader>mn", vim.cmd.BufferLineMoveNext, { desc = "Move Buffer Next" })
 vim.keymap.set("n", "<leader>mN", vim.cmd.BufferLineMovePrev, { desc = "Move Buffer Prev" })
-vim.keymap.set("n", "<leader>bd", ":bp<bar>bd#<CR>", { desc = "Delete buffer" })
-vim.keymap.set("n", "<leader>b!", ":bp<bar>bd!<CR>", { desc = "Delete buffer without saving" })
+vim.keymap.set("n", "<leader>bd", ":bd<bar>bp<CR>", { desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>b!", ":bd!<bar>bp<CR>", { desc = "Delete buffer without saving" })
 vim.keymap.set("n", "<leader>bx", ":%bd|e#<CR>", { desc = "Close other buffers" })
 
 -- Diagnostic keymaps

@@ -2,11 +2,9 @@ return {
   { "tpope/vim-fugitive", event = "VeryLazy" },
   { "tpope/vim-rhubarb", event = "VeryLazy" },
   {
-    -- Adds git related signs to the gutter, as well as utilities for managing changes
     "lewis6991/gitsigns.nvim",
     event = "VeryLazy",
     opts = {
-      -- See `:help gitsigns.txt`
       signs = {
         add = { text = "+" },
         change = { text = "~" },
@@ -23,7 +21,7 @@ return {
       on_attach = function(bufnr)
         vim.keymap.set(
           "n",
-          "<leader>hp",
+          "<leader>gp",
           require("gitsigns").preview_hunk,
           { buffer = bufnr, desc = "Preview git hunk" }
         )

@@ -7,13 +7,6 @@ return {
   },
   {
     "williamboman/mason-lspconfig.nvim",
-    lazy = false,
-    config = function()
-      local lsp = require("mason-lspconfig")
-      lsp.setup({
-        ensure_installed = { "lua_ls", "tsserver", "jsonls", "rust_analyzer" },
-      })
-    end,
   },
   {
     "jay-babu/mason-null-ls.nvim",
@@ -49,85 +42,65 @@ return {
     end,
   },
   {
+    "VonHeikemen/lsp-zero.nvim",
+    branch = "v3.x",
+  },
+  {
     "neovim/nvim-lspconfig",
+    event = "VeryLazy",
     dependencies = {
       { "folke/neodev.nvim", opts = {} },
     },
-    lazy = false,
     config = function()
-      local lspconfig = require("lspconfig")
-
-      local function organize_imports()
-        local params = {
-          command = "_typescript.organizeImports",
-          arguments = { vim.api.nvim_buf_get_name(0) },
-          title = "",
-        }
-        vim.lsp.buf.execute_command(params)
-      end
-
-      local servers = {
-        tsserver = {},
-        lua_ls = {},
-        jsonls = {
-          settings = {
-            json = {
-              schemas = require("schemastore").json.schemas(),
-              validate = { enable = true },
-              format = { enable = true },
-            },
-          },
-        },
-      }
-
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-      capabilities.textDocument.completion.completionItem.snippetSupport = true
-      local on_attach = function(client, bufnr)
-        local nmap = function(keys, func, desc)
-          if desc then
-            desc = "LSP: " .. desc
-          end
-
-          vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-        end
-
-        nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-        nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-
-        nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-        nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-        nmap("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-        nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
-
-        -- See `:help K` for why this keymap
-        nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-        nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-      end
-
-      local mason_lspconfig = require("mason-lspconfig")
-      mason_lspconfig.setup_handlers({
-        function(server_name)
-          if server_name == "tsserver" then
-            lspconfig[server_name].setup({
-              capabilities = capabilities,
-              settings = servers[server_name].settings,
-              on_attach = on_attach,
+      local lsp = require("mason-lspconfig")
+      local lsp_zero = require("lsp-zero")
+      lsp_zero.extend_lspconfig()
+      lsp_zero.on_attach(function(client, bufnr)
+        lsp_zero.default_keymaps({
+          buffer = bufnr,
+          preserve_mappings = false,
+        })
+        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename" })
+        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
+      end)
+      lsp.setup({
+        ensure_installed = { "lua_ls", "tsserver", "jsonls", "rust_analyzer" },
+        handlers = {
+          function(server_name)
+            local lspconfig = require("lspconfig")
+            lspconfig[server_name].setup({})
+          end,
+          tsserver = function()
+            local function organize_imports()
+              local params = {
+                command = "_typescript.organizeImports",
+                arguments = { vim.api.nvim_buf_get_name(0) },
+                title = "",
+              }
+              vim.lsp.buf.execute_command(params)
+            end
+            require("lspconfig").tsserver.setup({
               commands = {
                 OrganizeImports = {
                   organize_imports,
                   description = "Organize imports",
                 },
               },
+              single_file_support = false,
             })
-          else
-            lspconfig[server_name].setup({
-              capabilities = capabilities,
-              settings = servers[server_name] ~= nil and servers[server_name].settings or {},
-              on_attach = on_attach,
+          end,
+          jsonls = function()
+            require("lspconfig").jsonls.setup({
+              settings = {
+                json = {
+                  schemas = require("schemastore").json.schemas(),
+                  validate = { enable = true },
+                  format = { enable = true },
+                },
+              },
             })
-          end
-        end,
+          end,
+        },
       })
     end,
   },
