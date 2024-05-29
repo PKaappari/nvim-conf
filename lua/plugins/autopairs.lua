@@ -1,18 +1,13 @@
 return {
   {
     "windwp/nvim-autopairs",
-    event = { "InsertEnter", "CmdLineEnter" },
     dependencies = { "hrsh7th/nvim-cmp" },
-    config = function()
-      require("nvim-autopairs").setup({})
-      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-      local cmp = require("cmp")
-      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-    end,
+    event = "InsertEnter",
+    config = true
   },
   {
     "altermo/ultimate-autopair.nvim",
-    event = { "InsertEnter", "CmdLineEnter" },
+    event = { 'InsertEnter', 'CmdlineEnter' },
     branch = "v0.6",
     config = function()
       local autopair = require("nvim-autopairs")
@@ -25,16 +20,15 @@ return {
   },
   {
     "windwp/nvim-ts-autotag",
-    event = { "InsertEnter", "CmdLineEnter" },
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
       require("nvim-ts-autotag").setup({
-        autotag = {
-          enable = true,
-          enable_rename = true,
+        opts = {
           enable_close = true,
-        },
-        did_setup = true,
+          enable_rename = true,
+          enable_close_on_slash = true
+        }
       })
-    end,
+    end
   },
 }

@@ -14,8 +14,10 @@ return {
       },
       sync_install = false,
       ignore_install = {},
-      modules = {},
       indent = { enable = true },
+      autotag = {
+        enable = true
+      }
     })
   end,
 }

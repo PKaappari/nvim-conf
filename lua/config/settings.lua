@@ -70,24 +70,4 @@ vim.o.swapfile = false
 vim.o.backup = false
 vim.o.scrolloff = 8
 
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.tsx", "*.ts", "*.jsx", "*.js", "*.json" },
-  command = "silent! EslintFixAll",
-  group = vim.api.nvim_create_augroup("JsFormattingCommands", {}),
-})
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.tsx", "*.ts", "*.js", "*.jsx" },
-  command = "OrganizeImports",
-  group = vim.api.nvim_create_augroup("JsFormattingCommands", { clear = false }),
-})
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.tsx", "*.ts", "*.js", "*.jsx" },
-  command = "",
-  group = vim.api.nvim_create_augroup("JsFormattingCommands", { clear = false }),
-})
-
-
-
 vim.o.guicursor = "i:ver1,a:blinkon1"
