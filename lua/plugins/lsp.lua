@@ -13,10 +13,9 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       local null_ls = require("null-ls")
-      local augroup = vim.api.nvim_create_augroup("Formatting", {})
 
       require("mason-null-ls").setup({
-        ensure_installed = { "stylua", "prettierd", "refactoring", "eslint_d" },
+        ensure_installed = { "stylua", "prettierd", "refactoring", "tsserver", "eslint_d" },
         automatic_installation = true,
         handlers = {},
       })
@@ -86,16 +85,13 @@ return {
               },
               single_file_support = false,
               on_attach = function(client, bufnr)
-                vim.api.nvim_clear_autocmds({
-                  group = 'Formatting'
-                })
                 vim.api.nvim_create_autocmd('BufWritePre',
                   {
                     callback = function()
                       organize_imports(bufnr)
                       vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
                     end,
-                    group = vim.api.nvim_create_augroup('Formatting', { clear = false })
+                    group = vim.api.nvim_create_augroup('Formatting', { clear = true })
                   })
               end
             })
@@ -113,16 +109,13 @@ return {
           end,
           somesass_ls = function()
             require("lspconfig").somesass_ls.setup({
-              on_attach = function()
-                vim.api.nvim_clear_autocmds({
-                  group = 'Formatting'
-                })
+              on_attach = function(client, bufnr)
                 vim.api.nvim_create_autocmd('BufWritePre',
                   {
                     callback = function()
                       vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
                     end,
-                    group = vim.api.nvim_create_augroup('Formatting', { clear = false })
+                    group = vim.api.nvim_create_augroup('Formatting', { clear = true })
                   })
               end
             })
