@@ -15,9 +15,7 @@ return {
       sync_install = false,
       ignore_install = {},
       indent = { enable = true },
-      autotag = {
-        enable = true
-      }
+      modules = {},
     })
   end,
 }

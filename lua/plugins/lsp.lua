@@ -58,7 +58,6 @@ return {
         ensure_installed = { "lua_ls", "tsserver", "jsonls", "rust_analyzer" },
         handlers = {
           function(server_name)
-            lsp_zero.default_setup(server_name)
             local lspconfig = require("lspconfig")
             lspconfig[server_name].setup({
               on_attach = function(client, bufnr)
@@ -69,13 +68,14 @@ return {
             })
           end,
           tsserver = function()
-            local function organize_imports()
+            local function organize_imports(bufnr)
+              if not bufnr then bufnr = vim.api.nvim_get_current_buf() end
               local params = {
                 command = "_typescript.organizeImports",
-                arguments = { vim.api.nvim_buf_get_name(0) },
+                arguments = { vim.api.nvim_buf_get_name(bufnr) },
                 title = "",
               }
-              vim.lsp.buf.execute_command(params)
+              vim.lsp.buf_request_sync(bufnr, "workspace/executeCommand", params, 5000)
             end
             require("lspconfig").tsserver.setup({
               commands = {
@@ -92,7 +92,7 @@ return {
                 vim.api.nvim_create_autocmd('BufWritePre',
                   {
                     callback = function()
-                      organize_imports()
+                      organize_imports(bufnr)
                       vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
                     end,
                     group = vim.api.nvim_create_augroup('Formatting', { clear = false })

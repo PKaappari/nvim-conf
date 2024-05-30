@@ -3,7 +3,10 @@ return {
     "windwp/nvim-autopairs",
     dependencies = { "hrsh7th/nvim-cmp" },
     event = "InsertEnter",
-    config = true
+    config = function()
+      require("nvim-autopairs").setup({
+      })
+    end
   },
   {
     "altermo/ultimate-autopair.nvim",
@@ -12,7 +15,6 @@ return {
     config = function()
       local autopair = require("nvim-autopairs")
       require("ultimate-autopair").setup({})
-
       for _, i in ipairs(autopair.config.rules) do
         i.key_map = nil
       end
