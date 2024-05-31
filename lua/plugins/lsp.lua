@@ -15,15 +15,15 @@ return {
       local null_ls = require("null-ls")
 
       require("mason-null-ls").setup({
-        ensure_installed = { "stylua", "prettierd", "refactoring", "tsserver", "eslint_d" },
+        ensure_installed = { "lua_ls", "stylua", "prettierd", "refactoring", "eslint", "somesass_ls", "tsserver", "rust_analyzer" },
         automatic_installation = true,
         handlers = {},
       })
       null_ls.setup({
         sources = {
           null_ls.builtins.code_actions.refactoring,
-          require("none-ls.diagnostics.eslint_d"),
-          require("none-ls.code_actions.eslint_d"),
+          require("none-ls.diagnostics.eslint"),
+          require("none-ls.code_actions.eslint"),
         },
       })
     end,
@@ -54,7 +54,6 @@ return {
       end)
 
       lsp.setup({
-        ensure_installed = { "lua_ls", "tsserver", "jsonls", "rust_analyzer" },
         handlers = {
           function(server_name)
             local lspconfig = require("lspconfig")
