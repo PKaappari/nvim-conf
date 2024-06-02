@@ -15,15 +15,24 @@ return {
       local null_ls = require("null-ls")
 
       require("mason-null-ls").setup({
-        ensure_installed = { "lua_ls", "stylua", "prettierd", "refactoring", "eslint", "somesass_ls", "tsserver", "rust_analyzer" },
+        ensure_installed = {
+          "lua_ls",
+          "stylua",
+          "prettierd",
+          "refactoring",
+          "eslint_d",
+          "somesass_ls",
+          "tsserver",
+          "rust_analyzer",
+        },
         automatic_installation = true,
         handlers = {},
       })
       null_ls.setup({
         sources = {
           null_ls.builtins.code_actions.refactoring,
-          require("none-ls.diagnostics.eslint"),
-          require("none-ls.code_actions.eslint"),
+          require("none-ls.diagnostics.eslint_d"),
+          require("none-ls.code_actions.eslint_d"),
         },
       })
     end,
@@ -36,7 +45,8 @@ return {
     "neovim/nvim-lspconfig",
     event = "VeryLazy",
     dependencies = {
-      { "folke/neodev.nvim", opts = {} },
+      { "folke/lazydev.nvim", ft = "lua", opts = {} },
+      { "hrsh7th/cmp-nvim-lsp" },
     },
     config = function()
       local lsp = require("mason-lspconfig")
@@ -47,27 +57,37 @@ return {
         lsp_zero.default_keymaps({
           buffer = bufnr,
           preserve_mappings = false,
-          exclude = { '<F2>', '<F4>' },
+          exclude = { "<F2>", "<F4>" },
         })
         vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename" })
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
       end)
 
       lsp.setup({
+        ensure_installed = { "lua_ls", "somesass_ls", "tsserver", "rust_analyzer" },
         handlers = {
           function(server_name)
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
             local lspconfig = require("lspconfig")
             lspconfig[server_name].setup({
               on_attach = function(client, bufnr)
-                if (server_name ~= 'tsserver' or server_name ~= 'somesass_ls') then
-                  lsp_zero.buffer_autoformat(client, bufnr)
+                if client.name ~= "tsserver" then
+                  vim.api.nvim_create_autocmd("BufWritePre", {
+                    callback = function()
+                      vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
+                    end,
+                    group = vim.api.nvim_create_augroup("Formatting", { clear = true }),
+                  })
                 end
-              end
+              end,
+              capabilities = capabilities,
             })
           end,
           tsserver = function()
             local function organize_imports(bufnr)
-              if not bufnr then bufnr = vim.api.nvim_get_current_buf() end
+              if not bufnr then
+                bufnr = vim.api.nvim_get_current_buf()
+              end
               local params = {
                 command = "_typescript.organizeImports",
                 arguments = { vim.api.nvim_buf_get_name(bufnr) },
@@ -84,15 +104,14 @@ return {
               },
               single_file_support = false,
               on_attach = function(client, bufnr)
-                vim.api.nvim_create_autocmd('BufWritePre',
-                  {
-                    callback = function()
-                      organize_imports(bufnr)
-                      vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
-                    end,
-                    group = vim.api.nvim_create_augroup('Formatting', { clear = true })
-                  })
-              end
+                vim.api.nvim_create_autocmd("BufWritePre", {
+                  callback = function()
+                    organize_imports(bufnr)
+                    vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
+                  end,
+                  group = vim.api.nvim_create_augroup("Formatting", { clear = true }),
+                })
+              end,
             })
           end,
           jsonls = function()
@@ -106,19 +125,30 @@ return {
               },
             })
           end,
-          somesass_ls = function()
-            require("lspconfig").somesass_ls.setup({
-              on_attach = function(client, bufnr)
-                vim.api.nvim_create_autocmd('BufWritePre',
-                  {
-                    callback = function()
-                      vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
-                    end,
-                    group = vim.api.nvim_create_augroup('Formatting', { clear = true })
-                  })
-              end
+          cssls = function()
+            require("lspconfig").cssls.setup({
+              settings = {
+                css = {
+                  validate = true,
+                  lint = {
+                    unknownAtRules = "ignore",
+                  },
+                },
+                less = {
+                  validate = true,
+                  lint = {
+                    unknownAtRules = "ignore",
+                  },
+                },
+                scss = {
+                  validate = true,
+                  lint = {
+                    unknownAtRules = "ignore",
+                  },
+                },
+              },
             })
-          end
+          end,
         },
       })
     end,

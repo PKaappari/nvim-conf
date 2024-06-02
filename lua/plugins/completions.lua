@@ -10,8 +10,9 @@ return {
       "rafamadriz/friendly-snippets",
     },
     config = function()
-      require("luasnip").setup({})
-      require("luasnip").config.setup()
+      local luasnip = require("luasnip")
+      luasnip.setup({})
+      luasnip.config.setup()
     end,
   },
   {
@@ -34,7 +35,7 @@ return {
     config = function()
       local cmp = require("cmp")
       require("luasnip.loaders.from_vscode").lazy_load({
-        exclude = { "javascript", "javascriptreact" },
+        -- exclude = { "javascript", "javascriptreact" },
       })
 
       local luasnip = require("luasnip")
@@ -42,7 +43,8 @@ return {
       cmp.setup({
         snippet = {
           expand = function(args)
-            require("luasnip").lsp_expand(args.body)
+            -- require("luasnip").lsp_expand(args.body)
+            vim.snippet.expand(args.body)
           end,
         },
         window = {
@@ -79,6 +81,7 @@ return {
           { name = "luasnip" },
           { name = "npm" },
           { name = "path" },
+          { name = "lazydev", group_index = 0 },
         }, {
           { name = "buffer" },
         }),
