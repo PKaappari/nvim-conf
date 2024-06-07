@@ -75,14 +75,14 @@ vim.keymap.set("n", "<M-h>", "<C-w>h")
 vim.keymap.set("n", "<M-l>", "<C-w>l")
 
 vim.keymap.set("n", "<leader>tt", function()
-  require("trouble").toggle("workspace_diagnostics")
+  require("trouble").toggle("diagnostics")
 end, { desc = "[T]rouble [T]oggle" })
 vim.keymap.set("n", "<leader>tn", function()
   require("trouble").next({ skip_groups = true, jump = true })
 end, { desc = "[T]rouble move to [n]ext" })
 
 vim.keymap.set("n", "<leader>tp", function()
-  require("trouble").previous({ skip_groups = true, jump = true })
+  require("trouble").prev({ skip_groups = true, jump = true })
 end, { desc = "[T]rouble move to [p]revious" })
 
 vim.keymap.set("n", "<leader>tf", function()

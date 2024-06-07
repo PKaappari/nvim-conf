@@ -4,6 +4,7 @@ return {
   config = function()
     require("nvim-highlight-colors").setup({
       render = "virtual",
+      enable_name_colors = false,
     })
   end,
 }

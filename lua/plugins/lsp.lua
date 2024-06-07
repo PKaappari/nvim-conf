@@ -15,16 +15,7 @@ return {
       local null_ls = require("null-ls")
 
       require("mason-null-ls").setup({
-        ensure_installed = {
-          "lua_ls",
-          "stylua",
-          "prettierd",
-          "refactoring",
-          "eslint_d",
-          "somesass_ls",
-          "tsserver",
-          "rust_analyzer",
-        },
+        ensure_installed = { "stylua", "prettierd", "eslint_d" },
         automatic_installation = true,
         handlers = {},
       })
@@ -33,6 +24,7 @@ return {
           null_ls.builtins.code_actions.refactoring,
           require("none-ls.diagnostics.eslint_d"),
           require("none-ls.code_actions.eslint_d"),
+          require("none-ls.formatting.eslint_d"),
         },
       })
     end,
@@ -52,7 +44,6 @@ return {
       local lsp = require("mason-lspconfig")
       local lsp_zero = require("lsp-zero")
 
-      lsp_zero.extend_lspconfig()
       lsp_zero.on_attach(function(client, bufnr)
         lsp_zero.default_keymaps({
           buffer = bufnr,
@@ -63,8 +54,25 @@ return {
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
       end)
 
+      lsp_zero.set_sign_icons({
+        error = "✘",
+        warn = "▲",
+        hint = "⚑",
+        info = "»",
+      })
+
+      vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+        virtual_text = {
+          spacing = 4,
+          prefix = "⚑",
+        },
+        signs = true,
+        update_in_insert = false,
+        underline = true,
+      })
+
       lsp.setup({
-        ensure_installed = { "lua_ls", "somesass_ls", "tsserver", "rust_analyzer" },
+        ensure_installed = { "lua_ls", "tsserver" },
         handlers = {
           function(server_name)
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -95,6 +103,7 @@ return {
               }
               vim.lsp.buf_request_sync(bufnr, "workspace/executeCommand", params, 5000)
             end
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
             require("lspconfig").tsserver.setup({
               commands = {
                 OrganizeImports = {
@@ -102,7 +111,10 @@ return {
                   description = "Organize imports",
                 },
               },
-              single_file_support = false,
+              on_init = function(client)
+                client.server_capabilities.documentFormattingProvider = false
+                client.server_capabilities.documentRangeFormattingProvider = false
+              end,
               on_attach = function(client, bufnr)
                 vim.api.nvim_create_autocmd("BufWritePre", {
                   callback = function()
@@ -112,9 +124,11 @@ return {
                   group = vim.api.nvim_create_augroup("Formatting", { clear = true }),
                 })
               end,
+              capabilities = capabilities,
             })
           end,
           jsonls = function()
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
             require("lspconfig").jsonls.setup({
               settings = {
                 json = {
@@ -122,6 +136,7 @@ return {
                   validate = { enable = true },
                   format = { enable = true },
                 },
+                capabilities = capabilities,
               },
             })
           end,
