@@ -15,16 +15,15 @@ return {
       local null_ls = require("null-ls")
 
       require("mason-null-ls").setup({
-        ensure_installed = { "stylua", "prettierd", "eslint_d" },
+        ensure_installed = { "stylua", "prettierd" },
         automatic_installation = true,
         handlers = {},
       })
       null_ls.setup({
         sources = {
           null_ls.builtins.code_actions.refactoring,
-          require("none-ls.diagnostics.eslint_d"),
-          require("none-ls.code_actions.eslint_d"),
-          require("none-ls.formatting.eslint_d"),
+          require("none-ls.code_actions.eslint"),
+          require("none-ls.formatting.eslint"),
         },
       })
     end,
@@ -61,70 +60,23 @@ return {
         info = "»",
       })
 
-      vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-        virtual_text = {
-          spacing = 4,
-          prefix = "⚑",
-        },
-        signs = true,
-        update_in_insert = false,
-        underline = true,
-      })
-
       lsp.setup({
-        ensure_installed = { "lua_ls", "tsserver" },
+        ensure_installed = { "lua_ls" },
         handlers = {
           function(server_name)
-            local capabilities = require("cmp_nvim_lsp").default_capabilities()
             local lspconfig = require("lspconfig")
             lspconfig[server_name].setup({
-              on_attach = function(client, bufnr)
-                if client.name ~= "tsserver" then
-                  vim.api.nvim_create_autocmd("BufWritePre", {
-                    callback = function()
-                      vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
-                    end,
-                    group = vim.api.nvim_create_augroup("Formatting", { clear = true }),
-                  })
-                end
-              end,
-              capabilities = capabilities,
-            })
-          end,
-          tsserver = function()
-            local function organize_imports(bufnr)
-              if not bufnr then
-                bufnr = vim.api.nvim_get_current_buf()
-              end
-              local params = {
-                command = "_typescript.organizeImports",
-                arguments = { vim.api.nvim_buf_get_name(bufnr) },
-                title = "",
-              }
-              vim.lsp.buf_request_sync(bufnr, "workspace/executeCommand", params, 5000)
-            end
-            local capabilities = require("cmp_nvim_lsp").default_capabilities()
-            require("lspconfig").tsserver.setup({
-              commands = {
-                OrganizeImports = {
-                  organize_imports,
-                  description = "Organize imports",
-                },
-              },
-              on_init = function(client)
-                client.server_capabilities.documentFormattingProvider = false
-                client.server_capabilities.documentRangeFormattingProvider = false
-              end,
-              on_attach = function(client, bufnr)
+              on_attach = function(client)
                 vim.api.nvim_create_autocmd("BufWritePre", {
                   callback = function()
-                    organize_imports(bufnr)
-                    vim.lsp.buf.format({ bufnr = bufnr, async = false, timeout_ms = 5000 })
+                    vim.lsp.buf.format({
+                      async = false,
+                      timeout_ms = 5000,
+                    })
                   end,
                   group = vim.api.nvim_create_augroup("Formatting", { clear = true }),
                 })
               end,
-              capabilities = capabilities,
             })
           end,
           jsonls = function()

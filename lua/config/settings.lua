@@ -53,7 +53,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.wo.signcolumn = "yes"
+vim.wo.signcolumn = "yes:2"
 
 -- Decrease update time
 vim.o.updatetime = 150
@@ -71,3 +71,13 @@ vim.o.backup = false
 vim.o.scrolloff = 8
 
 vim.o.guicursor = "i:ver1,a:blinkon1"
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+  virtual_text = {
+    spacing = 4,
+    prefix = "⚑",
+  },
+  signs = true,
+  update_in_insert = false,
+  underline = true,
+})

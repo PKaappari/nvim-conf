@@ -94,3 +94,5 @@ vim.keymap.set("n", "<leader>tl", function()
 end, { desc = "[T]rouble move to [l]ast" })
 
 vim.keymap.set("n", "<leader>gg", vim.cmd.LazyGit, { desc = "LazyGit" })
+
+vim.keymap.set("n", "<leader>d", ":Telescope diagnostics<CR>", { desc = "Telescope [d]iagnostics" })
