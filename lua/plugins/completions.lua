@@ -43,8 +43,8 @@ return {
       cmp.setup({
         snippet = {
           expand = function(args)
-            -- require("luasnip").lsp_expand(args.body)
-            vim.snippet.expand(args.body)
+            require("luasnip").lsp_expand(args.body)
+            -- vim.snippet.expand(args.body)
           end,
         },
         window = {
@@ -80,11 +80,21 @@ return {
           { name = "nvim_lsp" },
           { name = "luasnip" },
           { name = "npm" },
-          { name = "path" },
           { name = "lazydev", group_index = 0 },
         }, {
+          { name = "path" },
           { name = "buffer" },
         }),
+        sorting = {
+          comparators = {
+            cmp.config.compare.offset,
+            cmp.config.compare.exact,
+            cmp.config.compare.score,
+            cmp.config.compare.recently_used,
+            cmp.config.compare.kind,
+          },
+          priority_weight = 10,
+        },
       })
       cmp.setup.cmdline({ "/", "?" }, {
         mapping = cmp.mapping.preset.cmdline(),

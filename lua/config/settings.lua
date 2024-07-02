@@ -23,7 +23,7 @@ vim.o.mouse = "a"
 local in_wsl = os.getenv("WSL_DISTRO_NAME") ~= nil
 
 if in_wsl then
-  vim.api.nvim_exec(
+  vim.api.nvim_exec2(
     [[
       let g:clipboard = {
         \   'name': 'win32yank-wsl',
@@ -38,7 +38,7 @@ if in_wsl then
         \   'cache_enabled': 0,
         \ }
     ]],
-    true
+    { output = true }
   )
 end
 

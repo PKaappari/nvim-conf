@@ -20,6 +20,7 @@ require("lazy").setup({ { import = "plugins" } }, {
     lazy = true,
   },
   checker = { enabled = true }, -- automatically check for plugin updates
+  install = { colorscheme = { "catppuccin" } },
   performance = {
     rtp = {
       -- disable some rtp plugins
