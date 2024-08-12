@@ -116,6 +116,9 @@ return {
               },
             })
           end,
+          somesass_ls = function()
+            require("lspconfig").somesass_ls.setup({})
+          end,
         },
       })
     end,

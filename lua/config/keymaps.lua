@@ -1,4 +1,5 @@
 vim.keymap.set("n", "<leader>ft", vim.cmd.Neotree, { desc = "[F]ile [T]ree" })
+vim.keymap.set("n", "<leader>o", vim.cmd.Oil, { desc = "[O]il" })
 
 vim.keymap.set("n", "<leader>fb", function()
   vim.cmd.Neotree({ "focus", "buffers", "left" })

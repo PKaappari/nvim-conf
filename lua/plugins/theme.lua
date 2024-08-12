@@ -37,16 +37,31 @@ return {
       "nvim-tree/nvim-web-devicons",
     },
     -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = true,
-        theme = "catppuccin",
-        section_separators = { left = "", right = "" },
-        disabled_filetypes = { "packer", "neo-tree" },
-        globalstatus = true,
-      },
-      extensions = { "nvim-tree" },
-    },
+    config = function()
+      local function show_macro_recording()
+        local recording_register = vim.fn.reg_recording()
+        if recording_register == "" then
+          return ""
+        else
+          return "Recording @" .. recording_register
+        end
+      end
+      require("lualine").setup({
+        options = {
+          icons_enabled = true,
+          theme = "catppuccin",
+          section_separators = { left = "", right = "" },
+          disabled_filetypes = { "packer", "neo-tree" },
+          globalstatus = true,
+        },
+        sections = {
+          lualine_x = {
+            { "macro_recording", fmt = show_macro_recording },
+          },
+        },
+        extensions = { "nvim-tree" },
+      })
+    end,
   },
   {
     "akinsho/bufferline.nvim",
