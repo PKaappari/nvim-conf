@@ -17,7 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({ { import = "plugins" } }, {
   defaults = {
-    lazy = true,
+    lazy = false,
   },
   checker = { enabled = true }, -- automatically check for plugin updates
   performance = {
@@ -25,8 +25,6 @@ require("lazy").setup({ { import = "plugins" } }, {
       -- disable some rtp plugins
       disabled_plugins = {
         "gzip",
-        -- "matchit",
-        -- "matchparen",
         "netrwPlugin",
         "tarPlugin",
         "tohtml",
@@ -37,9 +35,8 @@ require("lazy").setup({ { import = "plugins" } }, {
   },
 })
 
--- vim.cmd.colorscheme = "catppuccin"
-
 require("config.settings")
 require("config.keymaps")
-
+--
 -- vim: ts=2 sts=2 sw=2 et
+--

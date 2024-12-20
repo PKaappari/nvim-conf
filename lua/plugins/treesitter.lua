@@ -6,16 +6,16 @@ return {
   },
   config = function()
     require("nvim-treesitter.configs").setup({
-      ensure_installed = { "lua", "typescript", "javascript", "json" },
+      ensure_installed = { "lua", "typescript", "javascript", "json", "hyprlang" },
       auto_install = true,
       highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
       },
-      sync_install = false,
-      ignore_install = {},
       indent = { enable = true },
-      modules = {},
+    })
+    vim.filetype.add({
+      pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
     })
   end,
 }

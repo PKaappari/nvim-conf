@@ -71,3 +71,25 @@ vim.o.backup = false
 vim.o.scrolloff = 8
 
 vim.o.guicursor = "i:ver1,a:blinkon1"
+vim.g.markdown_fenced_languages = {
+  "ts=typescript",
+}
+vim.filetype.add({
+  pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
+})
+-- Hyprlang LSP
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  pattern = { "*.hl", "hypr*.conf" },
+  callback = function(event)
+    print(string.format("starting hyprls for %s", vim.inspect(event)))
+    vim.lsp.start({
+      name = "hyprlang",
+      cmd = { "hyprls" },
+      root_dir = vim.fn.getcwd(),
+    })
+  end,
+})
+
+vim.g.markdown_fenced_languages = {
+  "ts=typescript"
+}

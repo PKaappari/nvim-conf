@@ -55,7 +55,7 @@ return {
     dependencies = {
       "nvim-tree/nvim-web-devicons",
     },
-    after = "catpuccin",
+    after = "catppuccin",
     config = function()
       require("bufferline").setup({
         options = {
@@ -92,7 +92,19 @@ return {
     },
     after = "catppuccin",
     config = function()
-      require("neo-tree").setup({})
+      require("neo-tree").setup({
+        filesystem = {
+          hijack_netrw_behavior = "disabled",
+        },
+        event_handlers = {
+          {
+            event = "file_open_requested",
+            handler = function()
+              require("neo-tree.command").execute({ action = "close" })
+            end,
+          },
+        },
+      })
     end,
   },
 }

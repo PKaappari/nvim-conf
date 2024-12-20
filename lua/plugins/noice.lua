@@ -1,5 +1,6 @@
 return {
   "folke/noice.nvim",
+  lazy = false,
   after = "catppuccin",
   event = 'VeryLazy',
   opts = {
@@ -13,6 +14,9 @@ return {
     --   If not available, we use `mini` as the fallback
     {
       "rcarriga/nvim-notify",
+      opts = {
+        top_down = false
+      }
     },
   }
 }
