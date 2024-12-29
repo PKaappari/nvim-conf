@@ -8,6 +8,9 @@ return {
     require("nvim-treesitter.configs").setup({
       ensure_installed = { "lua", "typescript", "javascript", "json", "hyprlang" },
       auto_install = true,
+      sync_install = false,
+      ignore_install = {},
+      modules = {},
       highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
