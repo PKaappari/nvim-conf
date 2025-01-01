@@ -4,16 +4,19 @@ return {
     dependencies = { "hrsh7th/nvim-cmp" },
     event = "InsertEnter",
     config = function()
-      require("nvim-autopairs").setup({
-      })
-    end
+      require("nvim-autopairs").setup({})
+    end,
   },
   {
     "altermo/ultimate-autopair.nvim",
-    event = { 'InsertEnter', 'CmdlineEnter' },
+    event = { "InsertEnter", "CmdlineEnter" },
     branch = "v0.6",
     config = function()
       local autopair = require("nvim-autopairs")
+      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+      local cmp = require("cmp")
+
+      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
       require("ultimate-autopair").setup({})
       for _, i in ipairs(autopair.config.rules) do
         i.key_map = nil
@@ -28,9 +31,9 @@ return {
         opts = {
           enable_close = true,
           enable_rename = true,
-          enable_close_on_slash = true
-        }
+          enable_close_on_slash = true,
+        },
       })
-    end
+    end,
   },
 }

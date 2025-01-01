@@ -52,56 +52,9 @@ vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
--- See `:help telescope.builtin`
-vim.keymap.set(
-  "n",
-  "<leader>?",
-  require("telescope.builtin").oldfiles,
-  { desc = "[?] Find recently opened files", silent = true }
-)
-vim.keymap.set(
-  "n",
-  "<leader><space>",
-  require("telescope.builtin").buffers,
-  { desc = "[ ] Find existing buffers", silent = true }
-)
-vim.keymap.set("n", "<leader>/", function()
-  -- You can pass additional configuration to telescope to change theme, layout, etc.
-  require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-    winblend = 10,
-    previewer = false,
-  }))
-end, { desc = "[/] Fuzzily search in current buffer", silent = true })
-
-vim.keymap.set(
-  "n",
-  "<leader>sf",
-  require("telescope.builtin").git_files,
-  { desc = "Search [G]it [F]iles", silent = true }
-)
 vim.keymap.set("n", "<C-p>", function()
   require("telescope.builtin").find_files({ find_command = { "rg", "--files", "--hidden", "-g", "!.git" } })
 end, { desc = "[S]earch [F]iles", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc = "[S]earch [H]elp", silent = true })
-vim.keymap.set(
-  "n",
-  "<leader>sw",
-  require("telescope.builtin").grep_string,
-  { desc = "[S]earch current [W]ord", silent = true }
-)
-vim.keymap.set(
-  "n",
-  "<leader>sg",
-  require("telescope.builtin").live_grep,
-  { desc = "[S]earch by [G]rep", silent = true }
-)
-vim.keymap.set(
-  "n",
-  "<leader>sd",
-  require("telescope.builtin").diagnostics,
-  { desc = "[S]earch [D]iagnostics", silent = true }
-)
-vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[S]earch [R]esume", silent = true })
 vim.keymap.set("n", "<CR>", vim.cmd.nohlsearch, { silent = true })
 vim.keymap.set("n", "<M-j>", "<C-w>j")
 vim.keymap.set("n", "<M-k>", "<C-w>k")
@@ -115,7 +68,7 @@ vim.keymap.set("n", "<M-l>", "<C-w>l")
 --   require("trouble").next({ skip_groups = true, jump = true })
 -- end, { desc = "[T]rouble move to [n]ext" })
 -- --
--- vim.keymap.set("n", "<leader>tp", function()
+-- vim.keymap.set("n", "<leader>tp" function()
 --   require("trouble").prev({ skip_groups = true, jump = true })
 -- end, { desc = "[T]rouble move to [p]revious" })
 -- --
@@ -130,3 +83,8 @@ vim.keymap.set("n", "<M-l>", "<C-w>l")
 -- vim.keymap.set("n", "<leader>gg", vim.cmd.LazyGit, { desc = "LazyGit" })
 
 vim.keymap.set("i", "<C-BS>", "<C-w>", { silent = true })
+
+vim.keymap.set("t", "<esc><esc>", "<C-\\><C-n>")
+vim.keymap.set({ "t", "n" }, "<leader><CR>", vim.cmd.ToggleTerm)
+
+vim.keymap.set("n", "<leader>x", ":so %<cr>", { silent = true })

@@ -23,7 +23,7 @@ vim.o.mouse = "a"
 local in_wsl = os.getenv("WSL_DISTRO_NAME") ~= nil
 
 if in_wsl then
-  vim.api.nvim_exec(
+  vim.api.nvim_exec2(
     [[
       let g:clipboard = {
         \   'name': 'win32yank-wsl',
@@ -38,7 +38,7 @@ if in_wsl then
         \   'cache_enabled': 0,
         \ }
     ]],
-    true
+    { output = true }
   )
 end
 
@@ -56,8 +56,8 @@ vim.o.smartcase = true
 vim.wo.signcolumn = "yes"
 
 -- Decrease update time
-vim.o.updatetime = 150
-vim.o.timeoutlen = 100
+vim.o.updatetime = 250
+vim.o.timeoutlen = 300
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = "menuone,noselect"
@@ -69,6 +69,9 @@ vim.o.wrap = false
 vim.o.swapfile = false
 vim.o.backup = false
 vim.o.scrolloff = 8
+
+vim.o.inccommand = "split"
+vim.o.cursorline = true
 
 vim.o.guicursor = "i:ver1,a:blinkon1"
 vim.g.markdown_fenced_languages = {
@@ -91,5 +94,13 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
 })
 
 vim.g.markdown_fenced_languages = {
-  "ts=typescript"
+  "ts=typescript",
 }
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+  desc = "Highlight when yanking (copying) text",
+  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})

@@ -1,154 +1,140 @@
 return {
   {
-    "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup({})
-    end,
-  },
-  {
-    "williamboman/mason-lspconfig.nvim",
-  },
-  {
-    "jay-babu/mason-null-ls.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "williamboman/mason.nvim",
-      "nvimtools/none-ls.nvim",
+    "folke/lazydev.nvim",
+    ft = "lua",
+    opts = {
+      library = {
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
     },
-    config = function()
-      require("mason-null-ls").setup({
-        handlers = {},
-        automatic_installation = true,
-        ensure_installed = {
-          "prettierd",
-          "eslint_d",
-          "stylua",
-        },
-      })
-      local null_ls = require("null-ls")
-      null_ls.setup({
-        sources = {
-          null_ls.builtins.formatting.prettier,
-        },
-      })
-    end,
   },
-  {
-    "VonHeikemen/lsp-zero.nvim",
-    branch = "v3.x",
-  },
+  { "Bilal2453/luvit-meta", lazy = true },
   {
     "neovim/nvim-lspconfig",
-    event = "VeryLazy",
     dependencies = {
+      "williamboman/mason.nvim",
+      { "williamboman/mason-lspconfig.nvim", config = true },
       { "folke/lazydev.nvim", ft = "lua", opts = {} },
+      "WhoIsSethDaniel/mason-tool-installer.nvim",
+      {
+        "j-hui/fidget.nvim",
+        opts = {},
+      },
       { "hrsh7th/cmp-nvim-lsp" },
     },
     config = function()
-      local lsp = require("mason-lspconfig")
-      local lsp_zero = require("lsp-zero")
-      local lspconfig = require("lspconfig")
-
-      local buffer_autoformat = function(bufnr, client)
-        local group = "lsp_autoformat"
-        vim.api.nvim_create_augroup(group, { clear = false })
-        vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
-
-        vim.api.nvim_create_autocmd("BufWritePre", {
-          buffer = bufnr,
-          group = group,
-          desc = "LSP format on save",
-          callback = function()
-            -- note: do not enable async formatting
-            vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
-          end,
-        })
-      end
-
       vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
         callback = function(event)
-          local id = vim.tbl_get(event, "data", "client_id")
-          local client = id and vim.lsp.get_client_by_id(id)
-          if client == nil then
-            return
+          local map = function(keys, func, desc, mode)
+            mode = mode or "n"
+            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
           end
+          local telescope = require("telescope.builtin")
 
-          -- make sure there is at least one client with formatting capabilities
-          if client.supports_method("textDocument/formatting") then
-            buffer_autoformat(event.buf, client)
+          map("gd", telescope.lsp_definitions, "[G]oto [D]efinition")
+          map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+          map("gr", telescope.lsp_references, "[G]oto [R]eferences")
+          map("gI", telescope.lsp_implementations, "[G]oto [R]eferences")
+          map("<leader>D", telescope.lsp_type_definitions, "Type [D]efinitions")
+          map("<leader>ds", telescope.lsp_document_symbols, "[D]ocument [S]ymbols")
+          map("<leader>ws", telescope.lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+          map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+          map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
+          map("<leader>dh", vim.lsp.buf.document_highlight, "[D]ocument [H]ighlight")
+
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+            local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
+            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.document_highlight,
+            })
+
+            vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.clear_references,
+            })
+
+            vim.api.nvim_create_autocmd("LspDetach", {
+              group = vim.api.nvim_create_augroup("detach-highlight", { clear = true }),
+              callback = function(e)
+                vim.lsp.buf.clear_references()
+                vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = e.buf })
+              end,
+            })
           end
         end,
       })
 
-      lsp_zero.extend_lspconfig()
-      lsp_zero.on_attach(function(_, bufnr)
-        lsp_zero.default_keymaps({
-          buffer = bufnr,
-          preserve_mappings = false,
-          exclude = { "<F2>", "<F4>" },
-        })
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename" })
-        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
-      end)
-
-      lsp.setup({
-        ensure_installed = {
-          "lua_ls",
-          "somesass_ls",
-          "rust_analyzer",
-          "cssls",
-          "jsonls",
-          "denols",
-          "gopls",
+      require("mason").setup({})
+      local servers = {
+        lua_ls = {
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = "Replace",
+              },
+            },
+          },
         },
+        denols = {
+          root_dir = require("lspconfig").util.root_pattern("deno.json", "deno.jsonc"),
+        },
+        jsonls = {
+          settings = {
+            json = {
+              schemas = require("schemastore").json.schemas(),
+              validate = { enable = true },
+              format = { enable = true },
+            },
+          },
+        },
+        cssls = {
+          settings = {
+            css = {
+              validate = true,
+              lint = {
+                unknownAtRules = "ignore",
+              },
+            },
+            less = {
+              validate = true,
+              lint = {
+                unknownAtRules = "ignore",
+              },
+            },
+            scss = {
+              validate = true,
+              lint = {
+                unknownAtRules = "ignore",
+              },
+            },
+          },
+        },
+      }
+      local ensure_installed = vim.tbl_keys(servers or {})
+      vim.list_extend(ensure_installed, {
+        "stylua",
+        "eslint_d",
+        "prettierd",
+      })
+
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+
+      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+
+      require("mason-lspconfig").setup({
+        ensure_installed = {},
         automatic_installation = true,
         handlers = {
           function(server_name)
-            local capabilities = require("cmp_nvim_lsp").default_capabilities()
-            lspconfig[server_name].setup({
-              capabilities = capabilities,
-            })
-          end,
-          denols = function()
-            local nvim_lsp = require("lspconfig")
-            nvim_lsp.denols.setup({
-              root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc"),
-            })
-          end,
-          jsonls = function()
-            require("lspconfig").jsonls.setup({
-              settings = {
-                json = {
-                  schemas = require("schemastore").json.schemas(),
-                  validate = { enable = true },
-                  format = { enable = true },
-                },
-              },
-            })
-          end,
-          cssls = function()
-            require("lspconfig").cssls.setup({
-              settings = {
-                css = {
-                  validate = true,
-                  lint = {
-                    unknownAtRules = "ignore",
-                  },
-                },
-                less = {
-                  validate = true,
-                  lint = {
-                    unknownAtRules = "ignore",
-                  },
-                },
-                scss = {
-                  validate = true,
-                  lint = {
-                    unknownAtRules = "ignore",
-                  },
-                },
-              },
-            })
+            local server = servers[server_name] or {}
+            server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+            require("lspconfig")[server_name].setup(server)
           end,
         },
       })

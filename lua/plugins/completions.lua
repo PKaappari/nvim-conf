@@ -34,17 +34,15 @@ return {
     },
     config = function()
       local cmp = require("cmp")
-      require("luasnip.loaders.from_vscode").lazy_load({
-        -- exclude = { "javascript", "javascriptreact" },
-      })
+      require("luasnip.loaders.from_vscode").lazy_load({})
 
       local luasnip = require("luasnip")
 
       cmp.setup({
         snippet = {
           expand = function(args)
-            -- require("luasnip").lsp_expand(args.body)
-            vim.snippet.expand(args.body)
+            require("luasnip").lsp_expand(args.body)
+            -- vim.snippet.expand(args.body)
           end,
         },
         window = {
@@ -82,7 +80,6 @@ return {
           { name = "npm" },
           { name = "path" },
           { name = "lazydev", group_index = 0 },
-        }, {
           { name = "buffer" },
         }),
       })
@@ -96,7 +93,6 @@ return {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
           { name = "path" },
-        }, {
           {
             name = "cmdline",
             option = {
@@ -105,9 +101,6 @@ return {
           },
         }),
       })
-
-      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
     end,
   },
   {

@@ -14,7 +14,7 @@ return {
       },
       current_line_blame = true,
       current_line_blame_opts = {
-        delay = 300,
+        delay = 250,
         virt_text = true,
         virt_text_pos = "right_align",
       },
