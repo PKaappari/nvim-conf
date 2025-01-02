@@ -38,6 +38,6 @@ require("lazy").setup({ { import = "plugins" } }, {
 
 require("config.settings")
 require("config.keymaps")
-require("custom-plugins.setup")
+require("custom-plugins")
 --
 -- vim: ts=2 sts=2 sw=2 et
