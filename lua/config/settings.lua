@@ -104,3 +104,8 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     vim.highlight.on_yank()
   end,
 })
+
+vim.o.foldenable = true
+vim.o.foldlevelstart = 99
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "nvim_treesitter#foldexpr()"
