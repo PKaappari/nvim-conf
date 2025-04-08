@@ -28,7 +28,7 @@ return {
 
         -- don't override the built-in and fugitive keymaps
         local gs = package.loaded.gitsigns
-        vim.keymap.set("n", "<leader>gb", require("gitsigns").toggle_current_line_blame, { desc = "[G]it [B]lame" })
+        vim.keymap.set("n", "<leader>gb", gs.toggle_current_line_blame, { desc = "[G]it [B]lame" })
         vim.keymap.set({ "n", "v" }, "]c", function()
           if vim.wo.diff then
             return "]c"

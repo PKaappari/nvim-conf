@@ -70,6 +70,7 @@ return {
       })
 
       require("mason").setup({})
+
       local servers = {
         lua_ls = {
           settings = {
@@ -136,6 +137,27 @@ return {
             server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
             require("lspconfig")[server_name].setup(server)
           end,
+        },
+      })
+    end,
+  },
+  {
+    "jay-babu/mason-null-ls.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "nvimtools/none-ls.nvim",
+      "nvimtools/none-ls-extras.nvim",
+    },
+    config = function()
+      local null_ls = require("null-ls")
+      require("mason-null-ls").setup({
+        ensure_installed = {},
+        automatic_installation = true,
+        handlers = {},
+      })
+      null_ls.setup({
+        sources = {
+          require("none-ls.code_actions.eslint_d"),
         },
       })
     end,

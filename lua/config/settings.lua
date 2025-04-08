@@ -6,6 +6,7 @@ vim.o.tabstop = 2
 vim.o.shiftwidth = 2
 vim.o.shiftround = true
 vim.o.expandtab = true
+vim.o.eol = true
 
 -- Make line numbers default
 vim.wo.number = true
@@ -74,9 +75,6 @@ vim.o.inccommand = "split"
 vim.o.cursorline = true
 
 vim.o.guicursor = "i:ver1,a:blinkon1"
-vim.g.markdown_fenced_languages = {
-  "ts=typescript",
-}
 vim.filetype.add({
   pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
 })

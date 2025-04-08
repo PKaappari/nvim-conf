@@ -14,16 +14,38 @@ return {
   },
   opts = {
     notify_on_error = false,
+
     format_on_save = function(bufnr)
+      local filetype = vim.bo[bufnr].filetype
       local disable_filetypes = {}
+      local before_save = {
+        typescript = {
+          command = function(_)
+            local tsapi = require("typescript-tools.api")
+            tsapi.organize_imports(true)
+          end,
+        },
+        typescriptreact = {
+          command = function(_)
+            local tsapi = require("typescript-tools.api")
+            tsapi.organize_imports(true)
+          end,
+        },
+      }
+
       local lsp_format_opt
-      if disable_filetypes[vim.bo[bufnr].filetype] then
+      if disable_filetypes[filetype] then
         lsp_format_opt = "never"
       else
         lsp_format_opt = "fallback"
       end
+
+      if before_save[filetype] then
+        before_save[filetype].command(bufnr)
+      end
+
       return {
-        timeout_ms = 500,
+        timeout_ms = 1000,
         lsp_format = lsp_format_opt,
       }
     end,

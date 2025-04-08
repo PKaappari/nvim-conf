@@ -1,10 +1,6 @@
 vim.keymap.set("n", "<leader>ft", vim.cmd.Neotree, { desc = "[F]ile [T]ree", silent = true })
 vim.keymap.set("n", "<leader>fo", vim.cmd.Oil, { desc = "[O]il", silent = true })
 
-vim.keymap.set("n", "<leader>fb", function()
-  vim.cmd.Neotree({ "focus", "buffers", "left" })
-end, { desc = "[F]ile [B]uffers" })
-
 vim.keymap.set("n", "<leader>gs", vim.cmd.Git, { desc = "[G]it [S]tatus" })
 
 vim.keymap.set("v", "<M-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down", silent = true })
@@ -28,9 +24,9 @@ vim.keymap.set("n", "<C-l>", ":bn<CR>", { desc = "Move to next buffer", silent =
 vim.keymap.set("n", "<C-h>", ":bp<CR>", { desc = "Move to previous buffer", silent = true })
 vim.keymap.set("n", "<leader>mn", vim.cmd.BufferLineMoveNext, { desc = "Move Buffer Next", silent = true })
 vim.keymap.set("n", "<leader>mN", vim.cmd.BufferLineMovePrev, { desc = "Move Buffer Prev", silent = true })
-vim.keymap.set("n", "<leader>bd", ":bd<bar>bp<CR>", { desc = "Delete buffer", silent = true })
-vim.keymap.set("n", "<leader>b!", ":bd!<bar>bp<CR>", { desc = "Delete buffer without saving", silent = true })
-vim.keymap.set("n", "<leader>bx", ":%bd|e#<CR>", { desc = "Close other buffers", silent = true })
+-- vim.keymap.set("n", "<leader>bd", ":bd<bar>bp<CR>", { desc = "Delete buffer", silent = true })
+-- vim.keymap.set("n", "<leader>b!", ":bd!<bar>bp<CR>", { desc = "Delete buffer without saving", silent = true })
+-- vim.keymap.set("n", "<leader>bx", ":%bd|e#<CR>", { desc = "Close other buffers", silent = true })
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message", silent = true })
