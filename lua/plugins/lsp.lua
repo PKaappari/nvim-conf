@@ -22,7 +22,7 @@ return {
       },
       { "hrsh7th/cmp-nvim-lsp" },
     },
-    config = function()
+    config = function(_, opts)
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
         callback = function(event)
@@ -68,6 +68,12 @@ return {
           end
         end,
       })
+
+      -- local lspconfig = require("lspconfig")
+      -- for server, config in pairs(opts.servers) do
+      --   local capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
+      --   lspconfig[server].setup({ capabilities = capabilities })
+      -- end
 
       require("mason").setup({})
 
@@ -124,7 +130,7 @@ return {
       })
 
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+      capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities(capabilities))
 
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 

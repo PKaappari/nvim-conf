@@ -11,10 +11,9 @@ return {
     },
     notify = { enabled = true },
     notifier = { enabled = true },
+    input = { enabled = true },
     git = { enabled = true },
-    lazygit = {
-      enabled = true,
-    },
+    lazygit = { enabled = true },
     indent = {
       animate = {
         duration = 10,
@@ -60,6 +59,13 @@ return {
       end,
       desc = "Git Blame Line",
     },
+    {
+      "<leader>rf",
+      function()
+        Snacks.rename.rename_file()
+      end,
+      desc = "Rename File",
+    },
   },
   init = function()
     vim.api.nvim_create_autocmd("User", {
@@ -69,9 +75,16 @@ return {
           Snacks.debug.inspect(...)
         end
         vim.print = _G.dd
-        vim.notify("Snacks is ready!", vim.log.levels.INFO, { title = "Snacks" })
         Snacks.toggle.dim():map("<leader>zd")
         Snacks.toggle.inlay_hints():map("<leader>zh")
+      end,
+    })
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "OilActionsPost",
+      callback = function(event)
+        if event.data.actions.type == "move" then
+          Snacks.rename(event.data.actions.src_url, event.data.actions.dest_url)
+        end
       end,
     })
   end,
