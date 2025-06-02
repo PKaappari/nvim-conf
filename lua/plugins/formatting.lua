@@ -13,8 +13,7 @@ return {
     },
   },
   opts = {
-    notify_on_error = false,
-
+    notify_on_error = true,
     format_on_save = function(bufnr)
       local filetype = vim.bo[bufnr].filetype
       local disable_filetypes = {}
@@ -55,6 +54,7 @@ return {
       typescript = { "prettierd" },
       typescriptreact = { "prettierd" },
       javascriptreact = { "prettierd" },
+      xml = { "xmlformatter" },
     },
   },
 }

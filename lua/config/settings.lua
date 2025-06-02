@@ -58,7 +58,7 @@ vim.wo.signcolumn = "yes"
 
 -- Decrease update time
 vim.o.updatetime = 250
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 2000
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = "menuone,noselect"
@@ -78,32 +78,33 @@ vim.o.guicursor = "i:ver1,a:blinkon1"
 vim.filetype.add({
   pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
 })
--- Hyprlang LSP
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-  pattern = { "*.hl", "hypr*.conf" },
-  callback = function(event)
-    print(string.format("starting hyprls for %s", vim.inspect(event)))
-    vim.lsp.start({
-      name = "hyprlang",
-      cmd = { "hyprls" },
-      root_dir = vim.fn.getcwd(),
-    })
-  end,
-})
 
 vim.g.markdown_fenced_languages = {
   "ts=typescript",
 }
 
-vim.api.nvim_create_autocmd("TextYankPost", {
-  desc = "Highlight when yanking (copying) text",
-  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-})
-
 vim.o.foldenable = true
 vim.o.foldlevelstart = 99
 vim.o.foldmethod = "expr"
 vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+
+local signs = {
+  [vim.diagnostic.severity.ERROR] = "󰅙 ",
+  [vim.diagnostic.severity.WARN] = " ",
+  [vim.diagnostic.severity.HINT] = " ",
+  [vim.diagnostic.severity.INFO] = " ",
+}
+
+vim.diagnostic.config({
+  signs = { text = signs },
+  underline = true,
+  float = {
+    format = function(d)
+      return ("%s (%s) [%s]"):format(
+        d.message,
+        d.source,
+        d.code or (d.user_data and d.user_data.lsp and d.user_data.lsp.code) or ""
+      )
+    end,
+  },
+})

@@ -7,6 +7,7 @@ return {
     config = function()
       require("catppuccin").setup({
         integrations = {
+          bufferline = true,
           cmp = true,
           gitsigns = true,
           treesitter = true,
@@ -14,14 +15,10 @@ return {
           notify = true,
           noice = true,
           alpha = true,
-          indent_blankline = {
-            enabled = true,
-            colored_indent_levels = true,
-          },
           mason = true,
           neotree = true,
-          telescope = true,
           lsp_trouble = true,
+          snacks = true,
         },
         flavour = "mocha",
       })
@@ -33,9 +30,6 @@ return {
     "nvim-lualine/lualine.nvim",
     lazy = false,
     after = "catppuccin",
-    dependencies = {
-      "nvim-tree/nvim-web-devicons",
-    },
     -- See `:help lualine.txt`
     opts = {
       options = {
@@ -53,20 +47,33 @@ return {
     lazy = false,
     version = "*",
     dependencies = {
-      "nvim-tree/nvim-web-devicons",
+      -- {
+      --   "nvim-tree/nvim-web-devicons",
+      --   config = function()
+      --     require("nvim-web-devicons").setup({
+      --       override_by_extension = {
+      --         ["css"] = {
+      --           icon = "",
+      --           color = "#00AA98",
+      --           name = "Css",
+      --         },
+      --       },
+      --     })
+      --   end,
+      -- },
     },
     after = "catppuccin",
     config = function()
       require("bufferline").setup({
         options = {
-          mode = "buffers",
           separator_style = "slant",
           diagnostics = "nvim_lsp",
-          hover = {
-            enabled = true,
-            delay = 100,
-            reveal = { "close" },
-          },
+          diagnostics_indicator = function(count, level)
+            local icon = level:match("error") and "󰅙 "
+              or level:match("warning") and " "
+              or level:match("hint") and " "
+            return " " .. icon .. count
+          end,
           offsets = {
             {
               filetype = "neo-tree",
@@ -78,32 +85,6 @@ return {
           },
         },
         highlights = require("catppuccin.groups.integrations.bufferline").get(),
-      })
-    end,
-  },
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    lazy = false,
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons",
-      "MunifTanjim/nui.nvim",
-    },
-    after = "catppuccin",
-    config = function()
-      require("neo-tree").setup({
-        filesystem = {
-          hijack_netrw_behavior = "disabled",
-        },
-        event_handlers = {
-          {
-            event = "file_open_requested",
-            handler = function()
-              require("neo-tree.command").execute({ action = "close" })
-            end,
-          },
-        },
       })
     end,
   },
