@@ -11,6 +11,13 @@ return {
       { args = { "--globals", "vim", "lvim", "reload", "--" } }
     )
 
+    lint.linters.eslint_d = require("lint.util").wrap(lint.linters.eslint_d, function(diagnostics)
+      if diagnostics.message:find("Error: Could not find config file") then
+        return nil
+      end
+      return diagnostics
+    end)
+
     lint.linters_by_ft = {
       markdown = { "markdownlint" },
       lua = { "luacheck" },

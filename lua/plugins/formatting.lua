@@ -54,6 +54,8 @@ return {
       typescript = { "prettierd" },
       typescriptreact = { "prettierd" },
       javascriptreact = { "prettierd" },
+      htmlangular = { "prettierd" },
+      html = { "prettierd" },
       xml = { "xmlformatter" },
     },
   },

@@ -16,6 +16,7 @@ return {
     git = {},
     gitbrowse = {},
     lazygit = {},
+    image = {},
     indent = {
       animate = {
         duration = 20,

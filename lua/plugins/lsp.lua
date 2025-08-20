@@ -10,18 +10,26 @@ return {
   },
   { "Bilal2453/luvit-meta", lazy = true },
   {
-    "neovim/nvim-lspconfig",
+    "mason-org/mason.nvim",
+    config = function()
+      require("mason").setup({})
+    end,
+  },
+  { "mason-org/mason-lspconfig.nvim", config = true },
+  { "folke/lazydev.nvim", ft = "lua", opts = {} },
+  { "b0o/schemastore.nvim" },
+  {
+    "jay-babu/mason-null-ls.nvim",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
-      {
-        "mason-org/mason.nvim",
-        config = function()
-          require("mason").setup({})
-        end,
-      },
-      { "mason-org/mason-lspconfig.nvim", config = true },
-      { "folke/lazydev.nvim", ft = "lua", opts = {} },
+      "nvimtools/none-ls.nvim",
+      "nvimtools/none-ls-extras.nvim",
     },
-    config = function(_, _)
+  },
+  {
+    "neovim/nvim-lspconfig",
+    lazy = true,
+    config = function()
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
         callback = function(event)
@@ -71,13 +79,25 @@ return {
             },
           },
         },
-        denols = {
-          root_dir = require("lspconfig").util.root_pattern("deno.json", "deno.jsonc"),
-        },
         jsonls = {
           settings = {
             json = {
               schemas = require("schemastore").json.schemas(),
+              validate = { enable = true },
+              format = { enable = true },
+            },
+            jsonc = {
+              schemas = require("schemastore").json.schemas(),
+              validate = { enable = true },
+              format = { enable = true },
+            },
+            yml = {
+              schemas = require("schemastore").yaml.schemas(),
+              validate = { enable = true },
+              format = { enable = true },
+            },
+            yaml = {
+              schemas = require("schemastore").yaml.schemas(),
               validate = { enable = true },
               format = { enable = true },
             },
@@ -114,41 +134,23 @@ return {
         "prettierd",
       })
 
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities(capabilities))
-
-      require("mason-lspconfig").setup({
-        ensure_installed = {},
-        automatic_enable = true,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-            require("lspconfig")[server_name].setup(server)
-          end,
-        },
-      })
-    end,
-  },
-  {
-    "jay-babu/mason-null-ls.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "nvimtools/none-ls.nvim",
-      "nvimtools/none-ls-extras.nvim",
-    },
-    config = function()
-      local null_ls = require("null-ls")
       require("mason-null-ls").setup({
-        ensure_installed = {},
+        ensure_installed = ensure_installed,
         automatic_installation = true,
-        handlers = {},
       })
-      null_ls.setup({
+
+      require("null-ls").setup({
         sources = {
           require("none-ls.code_actions.eslint_d"),
         },
       })
+
+      for server_name, server in pairs(servers) do
+        local capabilities = vim.lsp.protocol.make_client_capabilities()
+        server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+        vim.lsp.enable(server_name)
+        vim.lsp.config[server_name] = server
+      end
     end,
   },
 }

@@ -1,8 +1,8 @@
+local Snacks = require("snacks")
 -- Hyprlang LSP
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   pattern = { "*.hl", "hypr*.conf" },
   callback = function(event)
-    print(string.format("starting hyprls for %s", vim.inspect(event)))
     vim.lsp.start({
       name = "hyprlang",
       cmd = { "hyprls" },
@@ -42,5 +42,14 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
         close_events = { "CursorMoved", "CursorMovedI", "BufHidden", "InsertCharPre", "WinLeave" },
       })
     end, 1500)
+  end,
+})
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "OilActionsPost",
+  callback = function(event)
+    if event.data.actions.type == "move" then
+      Snacks.rename.on_rename_file(event.data.actions.src_url, event.data.actions.dest_url)
+    end
   end,
 })
