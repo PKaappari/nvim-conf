@@ -62,5 +62,3 @@ vim.keymap.set("i", "<C-BS>", "<C-w>", { silent = true })
 vim.keymap.set("t", "<esc><esc>", "<C-\\><C-n>")
 
 vim.keymap.set("n", "<leader>x", ":so %<cr>", { silent = true })
-
-vim.keymap.set("n", "<leader>cc", vim.cmd.CopilotChatToggle, { desc = "Copilot Chat", silent = true })

@@ -40,6 +40,7 @@ return {
             "cssls",
             "pyright",
             "ruff",
+            "bashls",
           },
         },
       },
@@ -124,6 +125,7 @@ return {
         "cssls",
         "pyright",
         "ruff",
+        "bashls",
       })
     end,
   },

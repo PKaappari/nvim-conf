@@ -35,6 +35,7 @@ return {
       htmlangular = { "eslint_d" },
       html = { "eslint_d" },
       xml = { "xmlformatter" },
+      markdown = { "prettierd" },
       python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
       jwk = { "jsonformatter" },
     },
