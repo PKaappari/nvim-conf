@@ -47,6 +47,7 @@ local signs = {
 
 vim.diagnostic.config({
   signs = { text = signs },
+  update_in_insert = true,
   underline = true,
   float = {
     format = function(d)
