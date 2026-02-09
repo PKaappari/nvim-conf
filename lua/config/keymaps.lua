@@ -1,10 +1,7 @@
-vim.keymap.set("n", "<leader>ft", vim.cmd.Neotree, { desc = "[F]ile [T]ree", silent = true })
 vim.keymap.set("n", "<leader>e", function()
   local oil = require("oil")
   oil.open(nil, { preview = { split = "belowright", vertical = true } })
 end, { desc = "[O]il", silent = true })
-
-vim.keymap.set("n", "<leader>gs", vim.cmd.Git, { desc = "[G]it [S]tatus" })
 
 vim.keymap.set("v", "<M-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down", silent = true })
 vim.keymap.set("v", "<M-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up", silent = true })
@@ -20,9 +17,8 @@ vim.keymap.set("n", "<leader>y", '"+y', { desc = "Yank to clipboard", silent = t
 vim.keymap.set("v", "<leader>y", '"+y', { desc = "Yank to clipboard", silent = true })
 vim.keymap.set("n", "<leader>Y", '"+Y', { desc = "Yank to clipboard", silent = true })
 
-vim.keymap.set("v", "<leader>p", '"+p"', { desc = "Paste from clipboard", silent = true })
-vim.keymap.set("n", "<leader>p", '"+p"', { desc = "Paste from clipboard", silent = true })
-vim.keymap.set("n", "<leader>P", '"+P"', { desc = "Paste from clipboard", silent = true })
+vim.keymap.set("n", "<leader>P", '"+P', { desc = "Paste from clipboard", silent = true })
+vim.keymap.set("v", "<leader>P", '"+P', { desc = "Paste from clipboard", silent = true })
 
 -- Next prev buffer
 vim.keymap.set("n", "<M-Right>", "<C-I>", { desc = "Cycle Next Buffer", silent = true })
@@ -33,8 +29,12 @@ vim.keymap.set("n", "<leader>mn", vim.cmd.BufferLineMoveNext, { desc = "Move Buf
 vim.keymap.set("n", "<leader>mN", vim.cmd.BufferLineMovePrev, { desc = "Move Buffer Prev", silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message", silent = true })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic message", silent = true })
+vim.keymap.set("n", "[d", function()
+  vim.diagnostic.jump({ count = -1 })
+end, { desc = "Go to previous diagnostic message", silent = true })
+vim.keymap.set("n", "]d", function()
+  vim.diagnostic.jump({ count = 1 })
+end, { desc = "Go to next diagnostic message", silent = true })
 vim.keymap.set(
   "n",
   "<leader>le",
@@ -43,9 +43,6 @@ vim.keymap.set(
 )
 vim.keymap.set("n", "<leader>lq", vim.diagnostic.setloclist, { desc = "Open diagnostics list", silent = true })
 
--- [[ Basic Keymaps ]]
--- Keymaps for better default experience
--- See `:help vim.keymap.set()`
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
 -- Remap for dealing with word wrap
@@ -54,7 +51,7 @@ vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 
 vim.keymap.set("n", "<C-p>", function()
   Snacks.picker.smart()
-end, { desc = "Smart Find Files", noremap = true, silent = true })
+end, { desc = "Smart Find Files", silent = true })
 vim.keymap.set("n", "<CR>", vim.cmd.nohlsearch, { silent = true })
 vim.keymap.set("n", "<M-j>", "<C-w>j")
 vim.keymap.set("n", "<M-k>", "<C-w>k")
@@ -63,7 +60,6 @@ vim.keymap.set("n", "<M-l>", "<C-w>l")
 vim.keymap.set("i", "<C-BS>", "<C-w>", { silent = true })
 
 vim.keymap.set("t", "<esc><esc>", "<C-\\><C-n>")
--- vim.keymap.set({ "t", "n" }, "<leader><CR>", vim.cmd.ToggleTerm)
 
 vim.keymap.set("n", "<leader>x", ":so %<cr>", { silent = true })
 

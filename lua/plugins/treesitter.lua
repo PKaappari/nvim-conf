@@ -10,16 +10,11 @@ return {
       ensure_installed = { "lua", "typescript", "javascript", "json", "hyprlang" },
       auto_install = true,
       sync_install = false,
-      ignore_install = {},
-      modules = {},
       highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
       },
       indent = { enable = true },
-    })
-    vim.filetype.add({
-      pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
     })
   end,
 }

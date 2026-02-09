@@ -88,7 +88,7 @@ return {
     {
       "<leader>n",
       function()
-        Snacks.picker.notifications()
+        Snacks.notifier.show_history()
       end,
       desc = "Notification History",
     },
@@ -229,13 +229,6 @@ return {
         Snacks.picker.autocmds()
       end,
       desc = "Autocmds",
-    },
-    {
-      "<leader>sb",
-      function()
-        Snacks.picker.lines()
-      end,
-      desc = "Buffer Lines",
     },
     {
       "<leader>sc",
@@ -437,20 +430,6 @@ return {
       desc = "Select Scratch Buffer",
     },
     {
-      "<leader>n",
-      function()
-        Snacks.notifier.show_history()
-      end,
-      desc = "Notification History",
-    },
-    {
-      "<leader>bd",
-      function()
-        Snacks.bufdelete()
-      end,
-      desc = "Delete Buffer",
-    },
-    {
       "<leader>cR",
       function()
         Snacks.rename.rename_file()
@@ -464,13 +443,6 @@ return {
       end,
       desc = "Git Browse",
       mode = { "n", "v" },
-    },
-    {
-      "<leader>gg",
-      function()
-        Snacks.lazygit()
-      end,
-      desc = "Lazygit",
     },
     {
       "<leader>un",
@@ -514,14 +486,6 @@ return {
         vim.print = _G.dd
         Snacks.toggle.dim():map("<leader>zd")
         Snacks.toggle.inlay_hints():map("<leader>zh")
-      end,
-    })
-    vim.api.nvim_create_autocmd("User", {
-      pattern = "OilActionsPost",
-      callback = function(event)
-        if event.data.actions.type == "move" then
-          Snacks.rename(event.data.actions.src_url, event.data.actions.dest_url)
-        end
       end,
     })
   end,

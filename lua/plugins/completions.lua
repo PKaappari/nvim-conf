@@ -1,17 +1,15 @@
 return {
   "saghen/blink.cmp",
   dependencies = {
+    "giuxtaposition/blink-cmp-copilot",
     {
       "L3MON4D3/LuaSnip",
       version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
       dependencies = {
         "rafamadriz/friendly-snippets",
-        "giuxtaposition/blink-cmp-copilot",
       },
       config = function()
-        local luasnip = require("luasnip")
-        luasnip.setup({})
-        luasnip.config.setup()
+        require("luasnip").setup({})
         require("luasnip.loaders.from_vscode").lazy_load({})
       end,
     },
@@ -27,18 +25,18 @@ return {
       preset = "luasnip",
     },
     sources = {
-      default = { "lazydev", "lsp", "path", "snippets", "buffer", "omni" },
+      default = { "lazydev", "lsp", "path", "snippets", "buffer", "omni", "copilot" },
       providers = {
-        -- copilot = {
-        --   name = "copilot",
-        --   module = "blink-cmp-copilot",
-        --   score_offset = 100,
-        --   async = true,
-        -- },
         lazydev = {
           name = "LazyDev",
           module = "lazydev.integrations.blink",
+          score_offset = 200,
+        },
+        copilot = {
+          name = "copilot",
+          module = "blink-cmp-copilot",
           score_offset = 100,
+          async = true,
         },
       },
     },

@@ -53,3 +53,25 @@ vim.api.nvim_create_autocmd("User", {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+  desc = "Attach docker-compose lsp",
+  pattern = { "docker-compose*.yaml", "docker-compose*.yml" },
+  callback = function()
+    vim.bo.filetype = "yaml.docker-compose"
+  end,
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client == nil then
+      return
+    end
+    if client.name == "ruff" then
+      client.server_capabilities.hoverProvider = false
+    end
+  end,
+  desc = "LSP: Disable ruff hover capabilities",
+})

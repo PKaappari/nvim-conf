@@ -1,39 +1,19 @@
 return {
   {
-    "windwp/nvim-autopairs",
-    dependencies = { "hrsh7th/nvim-cmp" },
-    event = "InsertEnter",
-    config = function()
-      require("nvim-autopairs").setup({})
-    end,
-  },
-  {
-    "altermo/ultimate-autopair.nvim",
-    event = { "InsertEnter", "CmdlineEnter" },
-    branch = "v0.6",
-    config = function()
-      local autopair = require("nvim-autopairs")
-      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-      local cmp = require("cmp")
-
-      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-      require("ultimate-autopair").setup({})
-      for _, i in ipairs(autopair.config.rules) do
-        i.key_map = nil
-      end
-    end,
+    "saghen/blink.pairs",
+    version = "*",
+    dependencies = "saghen/blink.download",
+    opts = {},
   },
   {
     "windwp/nvim-ts-autotag",
     event = { "BufReadPre", "BufNewFile" },
-    config = function()
-      require("nvim-ts-autotag").setup({
-        opts = {
-          enable_close = true,
-          enable_rename = true,
-          enable_close_on_slash = true,
-        },
-      })
-    end,
+    opts = {
+      opts = {
+        enable_close = true,
+        enable_rename = true,
+        enable_close_on_slash = true,
+      },
+    },
   },
 }

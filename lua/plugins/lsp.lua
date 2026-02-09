@@ -3,39 +3,53 @@ return {
     "folke/lazydev.nvim",
     ft = "lua",
     opts = {
-      library = {
-        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-      },
+      library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } },
     },
   },
   { "Bilal2453/luvit-meta", lazy = true },
-  {
-    "mason-org/mason.nvim",
-    config = function()
-      require("mason").setup({})
-    end,
-  },
-  { "mason-org/mason-lspconfig.nvim", config = true },
-  { "folke/lazydev.nvim", ft = "lua", opts = {} },
-  { "b0o/schemastore.nvim" },
+
+  -- eslint_d code actions
   {
     "jay-babu/mason-null-ls.nvim",
     event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "nvimtools/none-ls.nvim",
-      "nvimtools/none-ls-extras.nvim",
-    },
+    dependencies = { "nvimtools/none-ls.nvim", "nvimtools/none-ls-extras.nvim" },
+    config = function()
+      require("mason-null-ls").setup({
+        ensure_installed = { "stylua", "eslint_d", "prettierd" },
+        automatic_installation = true,
+      })
+      require("null-ls").setup({
+        sources = { require("none-ls.code_actions.eslint_d") },
+      })
+    end,
   },
+
+  -- LSP
   {
     "neovim/nvim-lspconfig",
-    lazy = true,
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      { "mason-org/mason.nvim", opts = {} },
+      {
+        "mason-org/mason-lspconfig.nvim",
+        opts = {
+          ensure_installed = {
+            "lua_ls",
+            "jsonls",
+            "docker_compose_language_service",
+            "cssls",
+            "pyright",
+            "ruff",
+          },
+        },
+      },
+    },
     config = function()
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
         callback = function(event)
-          local map = function(keys, func, desc, mode)
-            mode = mode or "n"
-            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+          local function map(keys, func, desc, mode)
+            vim.keymap.set(mode or "n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
           end
 
           map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
@@ -43,23 +57,20 @@ return {
           map("<leader>dh", vim.lsp.buf.document_highlight, "[D]ocument [H]ighlight")
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          local method = vim.lsp.protocol.Methods.textDocument_documentHighlight
-          if client and client.supports_method(client, method, event.buf) then
-            local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
+          if client and client:supports_method("textDocument/documentHighlight", event.buf) then
+            local group = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
             vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
               buffer = event.buf,
-              group = highlight_augroup,
+              group = group,
               callback = vim.lsp.buf.document_highlight,
             })
-
             vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
               buffer = event.buf,
-              group = highlight_augroup,
+              group = group,
               callback = vim.lsp.buf.clear_references,
             })
-
             vim.api.nvim_create_autocmd("LspDetach", {
-              group = vim.api.nvim_create_augroup("detach-highlight", { clear = true }),
+              group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
               callback = function(e)
                 vim.lsp.buf.clear_references()
                 vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = e.buf })
@@ -69,88 +80,51 @@ return {
         end,
       })
 
-      local servers = {
-        lua_ls = {
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = "Replace",
-              },
-            },
+      -- Server configurations (merged with defaults from nvim-lspconfig)
+      vim.lsp.config.lua_ls = {
+        settings = {
+          Lua = { completion = { callSnippet = "Replace" } },
+        },
+      }
+
+      vim.lsp.config.jsonls = {
+        settings = {
+          json = {
+            schemas = require("schemastore").json.schemas(),
+            validate = { enable = true },
+            format = { enable = true },
           },
         },
-        jsonls = {
-          settings = {
-            json = {
-              schemas = require("schemastore").json.schemas(),
-              validate = { enable = true },
-              format = { enable = true },
-            },
-            jsonc = {
-              schemas = require("schemastore").json.schemas(),
-              validate = { enable = true },
-              format = { enable = true },
-            },
-            yml = {
-              schemas = require("schemastore").yaml.schemas(),
-              validate = { enable = true },
-              format = { enable = true },
-            },
-            yaml = {
-              schemas = require("schemastore").yaml.schemas(),
-              validate = { enable = true },
-              format = { enable = true },
-            },
-          },
+      }
+
+      vim.lsp.config.cssls = {
+        settings = {
+          css = { validate = true, lint = { unknownAtRules = "ignore" } },
+          less = { validate = true, lint = { unknownAtRules = "ignore" } },
+          scss = { validate = true, lint = { unknownAtRules = "ignore" } },
         },
-        cssls = {
-          settings = {
-            css = {
-              validate = true,
-              lint = {
-                unknownAtRules = "ignore",
-              },
-            },
-            less = {
-              validate = true,
-              lint = {
-                unknownAtRules = "ignore",
-              },
-            },
-            scss = {
-              validate = true,
-              lint = {
-                unknownAtRules = "ignore",
-              },
+      }
+
+      vim.lsp.config.pyright = {
+        settings = {
+          python = {
+            analysis = {
+              autoImportCompletions = true,
+              diagnosticMode = "workspace",
             },
           },
         },
       }
 
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        "stylua",
-        "eslint_d",
-        "prettierd",
+      -- Servers with no custom config use defaults from nvim-lspconfig
+      vim.lsp.enable({
+        "lua_ls",
+        "jsonls",
+        "docker_compose_language_service",
+        "cssls",
+        "pyright",
+        "ruff",
       })
-
-      require("mason-null-ls").setup({
-        ensure_installed = ensure_installed,
-        automatic_installation = true,
-      })
-
-      require("null-ls").setup({
-        sources = {
-          require("none-ls.code_actions.eslint_d"),
-        },
-      })
-
-      for server_name, server in pairs(servers) do
-        local capabilities = vim.lsp.protocol.make_client_capabilities()
-        server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-        vim.lsp.enable(server_name)
-        vim.lsp.config[server_name] = server
-      end
     end,
   },
 }
