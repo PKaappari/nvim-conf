@@ -4,12 +4,12 @@ return {
   cmd = { "ConformInfo" },
   keys = {
     {
-      "<leader>fb",
+      "<leader>lf",
       function()
         require("conform").format({ async = true, lsp_format = "fallback" })
       end,
       mode = "",
-      desc = "[F]ormat [B]uffer",
+      desc = "[L]SP [F]ormat Buffer",
     },
   },
   opts = {
@@ -18,7 +18,10 @@ return {
       local filetype = vim.bo[bufnr].filetype
 
       if filetype == "typescript" or filetype == "typescriptreact" then
-        require("typescript-tools.api").organize_imports(true)
+        local ok, ts_tools = pcall(require, "typescript-tools.api")
+        if ok then
+          ts_tools.organize_imports(true)
+        end
       end
 
       return {

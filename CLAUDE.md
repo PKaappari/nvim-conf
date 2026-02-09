@@ -23,7 +23,7 @@ Personal Neovim configuration using lazy.nvim as the plugin manager. All configu
 - `formatting.lua` — conform.nvim (eslint_d, stylua, ruff, pretterd)
 - `lint.lua` — nvim-lint (eslint_d, luacheck, markdownlint)
 - `theme.lua` — Catppuccin (mocha) + lualine + bufferline
-- `git.lua` — fugitive, gitsigns
+- `git.lua` — gitsigns
 - `copilot.lua` — GitHub Copilot + CopilotChat
 
 ## Conventions

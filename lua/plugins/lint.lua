@@ -8,7 +8,7 @@ return {
       "force",
       {},
       lint.linters.luacheck,
-      { args = { "--globals", "vim", "lvim", "reload", "--" } }
+      { args = { "--globals", "vim", "reload", "--" } }
     )
 
     lint.linters.eslint_d = require("lint.util").wrap(lint.linters.eslint_d, function(diagnostics)

@@ -27,6 +27,10 @@ return {
     terminal = {},
     scratch = {},
     statuscolumn = {},
+    zen = {},
+    words = {},
+    bufdelete = {},
+    rename = {},
   },
   keys = {
     {
@@ -194,13 +198,6 @@ return {
       desc = "Grep Open Buffers",
     },
     {
-      "<leader>sg",
-      function()
-        Snacks.picker.grep()
-      end,
-      desc = "Grep",
-    },
-    {
       "<leader>sw",
       function()
         Snacks.picker.grep_word()
@@ -229,13 +226,6 @@ return {
         Snacks.picker.autocmds()
       end,
       desc = "Autocmds",
-    },
-    {
-      "<leader>sc",
-      function()
-        Snacks.picker.command_history()
-      end,
-      desc = "Command History",
     },
     {
       "<leader>sC",
@@ -428,13 +418,6 @@ return {
         Snacks.scratch.select()
       end,
       desc = "Select Scratch Buffer",
-    },
-    {
-      "<leader>cR",
-      function()
-        Snacks.rename.rename_file()
-      end,
-      desc = "Rename File",
     },
     {
       "<leader>gB",

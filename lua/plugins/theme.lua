@@ -46,8 +46,10 @@ return {
         diagnostics = "nvim_lsp",
         diagnostics_indicator = function(count, level)
           local icon = level:match("error") and "󰅙 "
-            or level:match("warning") and " "
-            or level:match("hint") and " "
+            or level:match("warning") and "󰀦 "
+            or level:match("hint") and "󰌵 "
+            or level:match("info") and "󰋼 "
+            or ""
           return " " .. icon .. count
         end,
         offsets = {

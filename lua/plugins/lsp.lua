@@ -44,6 +44,7 @@ return {
           },
         },
       },
+      { "b0o/SchemaStore.nvim" },
     },
     config = function()
       vim.api.nvim_create_autocmd("LspAttach", {
@@ -84,7 +85,10 @@ return {
       -- Server configurations (merged with defaults from nvim-lspconfig)
       vim.lsp.config.lua_ls = {
         settings = {
-          Lua = { completion = { callSnippet = "Replace" } },
+          Lua = {
+            completion = { callSnippet = "Replace" },
+            diagnostics = { globals = { "vim" } },
+          },
         },
       }
 
@@ -108,6 +112,9 @@ return {
 
       vim.lsp.config.pyright = {
         settings = {
+          pyright = {
+            disableOrganizeImports = true,
+          },
           python = {
             analysis = {
               autoImportCompletions = true,
