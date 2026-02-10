@@ -1,4 +1,5 @@
 vim.o.winaltkeys = "no"
+vim.o.winborder = "rounded"
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
 vim.o.shiftround = true
@@ -50,6 +51,7 @@ vim.diagnostic.config({
   update_in_insert = true,
   underline = true,
   float = {
+    border = "rounded",
     format = function(d)
       return ("%s (%s) [%s]"):format(
         d.message,
@@ -59,3 +61,4 @@ vim.diagnostic.config({
     end,
   },
 })
+

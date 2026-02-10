@@ -7,7 +7,6 @@ return {
     },
   },
   { "Bilal2453/luvit-meta", lazy = true },
-
   -- eslint_d code actions
   {
     "jay-babu/mason-null-ls.nvim",
@@ -88,6 +87,11 @@ return {
           Lua = {
             completion = { callSnippet = "Replace" },
             diagnostics = { globals = { "vim" } },
+            workspace = {
+              library = {
+                vim.env.VIMRUNTIME,
+              },
+            },
           },
         },
       }

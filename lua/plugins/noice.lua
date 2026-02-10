@@ -10,8 +10,11 @@ return {
         ["vim.lsp.util.stylize_markdown"] = true,
       },
       hover = {
-        enabled = true,
+        enabled = false,
         silent = true,
+        opts = {
+          border = { style = "rounded" },
+        },
       },
     },
   },
