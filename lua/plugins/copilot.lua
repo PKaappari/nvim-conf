@@ -1,64 +1,37 @@
 return {
   {
     "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
     event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        suggestion = {
-          auto_trigger = true,
+    opts = {
+      suggestion = {
+        enabled = true,
+        auto_trigger = true,
+        keymap = {
+          accept = "<C-l>",
+          accept_word = "<C-f>",
+          next = "<M-]>",
+          prev = "<M-[>",
+          dismiss = "<C-]>",
         },
-        panel = {
-          enabled = false,
-        },
-      })
-
-      local suggestion = require("copilot.suggestion")
-      vim.keymap.set("i", "<C-l>", suggestion.accept, { desc = "Accept Copilot suggestion" })
-      vim.keymap.set("i", "<C-h>", suggestion.next, { desc = "Next Copilot suggestion" })
-      vim.keymap.set("i", "<C-j>", suggestion.prev, { desc = "Previous Copilot suggestion" })
-      vim.keymap.set("i", "<C-k>", suggestion.dismiss, { desc = "Dismiss Copilot suggestion" })
-    end,
+      },
+      panel = { enabled = false },
+    },
   },
-
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    build = "make tiktoken",
-    opts = {},
+    dependencies = { "zbirenbaum/copilot.lua", "nvim-lua/plenary.nvim" },
+    cmd = "CopilotChat",
     keys = {
-      { "<leader>cc", "<cmd>CopilotChatToggle<cr>", desc = "Copilot Chat toggle" },
-      {
-        "<leader>ce",
-        "<cmd>CopilotChatExplain<cr>",
-        mode = { "n", "v" },
-        desc = "Copilot explain",
-      },
-      {
-        "<leader>cr",
-        "<cmd>CopilotChatReview<cr>",
-        mode = { "n", "v" },
-        desc = "Copilot review",
-      },
-      {
-        "<leader>cf",
-        "<cmd>CopilotChatFix<cr>",
-        mode = { "n", "v" },
-        desc = "Copilot fix",
-      },
-      {
-        "<leader>co",
-        "<cmd>CopilotChatOptimize<cr>",
-        mode = { "n", "v" },
-        desc = "Copilot optimize",
-      },
-      {
-        "<leader>ct",
-        "<cmd>CopilotChatTests<cr>",
-        mode = { "n", "v" },
-        desc = "Copilot generate tests",
-      },
+      { "<leader>cc", "<cmd>CopilotChatToggle<CR>", mode = { "n", "v" }, desc = "Chat toggle" },
+      { "<leader>ct", function() require("copilot.suggestion").toggle_auto_trigger() end, desc = "Toggle suggestions" },
+      { "<leader>ce", "<cmd>CopilotChatExplain<CR>", mode = { "n", "v" }, desc = "Explain code" },
+      { "<leader>cr", "<cmd>CopilotChatReview<CR>", mode = { "n", "v" }, desc = "Review code" },
+      { "<leader>cf", "<cmd>CopilotChatFix<CR>", mode = { "n", "v" }, desc = "Fix code" },
+      { "<leader>co", "<cmd>CopilotChatOptimize<CR>", mode = { "n", "v" }, desc = "Optimize code" },
+      { "<leader>cd", "<cmd>CopilotChatDocs<CR>", mode = { "n", "v" }, desc = "Generate docs" },
+      { "<leader>cs", "<cmd>CopilotChatTests<CR>", mode = { "n", "v" }, desc = "Generate tests" },
     },
+    opts = {},
   },
 }

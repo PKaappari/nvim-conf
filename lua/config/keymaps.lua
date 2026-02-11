@@ -1,64 +1,44 @@
-vim.keymap.set("n", "<leader>e", function()
-  local oil = require("oil")
-  oil.open(nil, { preview = { split = "belowright", vertical = true } })
-end, { desc = "[O]il", silent = true })
+local map = vim.keymap.set
 
-vim.keymap.set("v", "<M-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down", silent = true })
-vim.keymap.set("v", "<M-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up", silent = true })
-vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down", silent = true })
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll up", silent = true })
-vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result", silent = true })
-vim.keymap.set("n", "N", "Nzzzv", { desc = "Prev search result", silent = true })
+-- Clear search highlight
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 
-vim.keymap.set("x", "<leader>p", '"_dp', { desc = "Paste from buffer without copying", silent = true })
+-- Better window navigation
+map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
--- Copy to system clipboard
-vim.keymap.set("n", "<leader>y", '"+y', { desc = "Yank to clipboard", silent = true })
-vim.keymap.set("v", "<leader>y", '"+y', { desc = "Yank to clipboard", silent = true })
-vim.keymap.set("n", "<leader>Y", '"+Y', { desc = "Yank to clipboard", silent = true })
+-- Resize windows
+map("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Increase window height" })
+map("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
+map("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width" })
+map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
 
-vim.keymap.set("n", "<leader>P", '"+P', { desc = "Paste from clipboard", silent = true })
-vim.keymap.set("v", "<leader>P", '"+P', { desc = "Paste from clipboard", silent = true })
+-- Move lines
+map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+-- Keep cursor position when joining lines
+map("n", "J", "mzJ`z", { desc = "Join lines (keep cursor)" })
 
--- Next prev buffer
-vim.keymap.set("n", "<M-Right>", "<C-I>", { desc = "Cycle Next Buffer", silent = true })
-vim.keymap.set("n", "<M-Left>", "<C-O>", { desc = "Cycle Prev Buffer", silent = true })
-vim.keymap.set("n", "<C-l>", ":bn<CR>", { desc = "Move to next buffer", silent = true })
-vim.keymap.set("n", "<C-h>", ":bp<CR>", { desc = "Move to previous buffer", silent = true })
-vim.keymap.set("n", "<leader>mn", vim.cmd.BufferLineMoveNext, { desc = "Move Buffer Next", silent = true })
-vim.keymap.set("n", "<leader>mN", vim.cmd.BufferLineMovePrev, { desc = "Move Buffer Prev", silent = true })
+-- Better paste (don't overwrite register)
+map("x", "p", [["_dP]], { desc = "Paste without overwriting register" })
 
--- Diagnostic keymaps
-vim.keymap.set("n", "[d", function()
+-- Diagnostics navigation
+map("n", "[d", function()
   vim.diagnostic.jump({ count = -1 })
-end, { desc = "Go to previous diagnostic message", silent = true })
-vim.keymap.set("n", "]d", function()
+end, { desc = "Previous diagnostic" })
+map("n", "]d", function()
   vim.diagnostic.jump({ count = 1 })
-end, { desc = "Go to next diagnostic message", silent = true })
-vim.keymap.set(
-  "n",
-  "<leader>le",
-  vim.diagnostic.open_float,
-  { desc = "Open floating diagnostic message", silent = true }
-)
-vim.keymap.set("n", "<leader>lq", vim.diagnostic.setloclist, { desc = "Open diagnostics list", silent = true })
+end, { desc = "Next diagnostic" })
 
-vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+map("n", "[q", "<cmd>cprev<CR>zz", { desc = "Previous quickfix" })
+map("n", "]q", "<cmd>cnext<CR>zz", { desc = "Next quickfix" })
 
--- Remap for dealing with word wrap
-vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+-- Buffer navigation
+map("n", "<A-h>", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
+map("n", "<A-l>", "<cmd>bnext<CR>", { desc = "Next buffer" })
 
-vim.keymap.set("n", "<C-p>", function()
-  Snacks.picker.smart()
-end, { desc = "Smart Find Files", silent = true })
-vim.keymap.set("n", "<CR>", vim.cmd.nohlsearch, { silent = true })
-vim.keymap.set("n", "<M-j>", "<C-w>j")
-vim.keymap.set("n", "<M-k>", "<C-w>k")
-vim.keymap.set("n", "<M-h>", "<C-w>h")
-vim.keymap.set("n", "<M-l>", "<C-w>l")
-vim.keymap.set("i", "<C-BS>", "<C-w>", { silent = true })
-
-vim.keymap.set("t", "<esc><esc>", "<C-\\><C-n>")
-
-vim.keymap.set("n", "<leader>x", ":so %<cr>", { silent = true })
+-- Tab navigation
+map("n", "<A-j>", "<cmd>tabnext<CR>", { desc = "Next tab" })
+map("n", "<A-k>", "<cmd>tabprevious<CR>", { desc = "Previous tab" })

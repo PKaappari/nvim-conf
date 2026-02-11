@@ -1,70 +1,51 @@
 return {
   "saghen/blink.cmp",
+  event = "InsertEnter",
+  version = "*",
   dependencies = {
-    {
-      "L3MON4D3/LuaSnip",
-      version = "v2.*",
-      dependencies = {
-        "rafamadriz/friendly-snippets",
-      },
-      config = function()
-        require("luasnip").setup({})
-        require("luasnip.loaders.from_vscode").lazy_load({})
-      end,
-    },
+    "giuxtaposition/blink-cmp-copilot",
   },
-  version = "1.*",
-  ---@module 'blink.cmp'
-  ---@type blink.cmp.Config
   opts = {
     keymap = {
-      preset = "enter",
+      preset = "default",
+      ["<CR>"] = { "accept", "fallback" },
     },
-    snippets = {
-      preset = "luasnip",
+    appearance = {
+      nerd_font_variant = "mono",
     },
     sources = {
-      default = { "lazydev", "lsp", "path", "snippets", "buffer" },
+      default = { "lazydev", "lsp", "path", "buffer", "copilot" },
       providers = {
         lazydev = {
           name = "LazyDev",
           module = "lazydev.integrations.blink",
           score_offset = 100,
         },
-      },
-    },
-    signature = {
-      enabled = true,
-      window = { border = "rounded" },
-    },
-    cmdline = {
-      enabled = true,
-      completion = {
-        menu = {
-          border = "rounded",
-          auto_show = true,
+        copilot = {
+          name = "copilot",
+          module = "blink-cmp-copilot",
+          score_offset = 50,
+          async = true,
         },
       },
     },
-
     completion = {
+      accept = { auto_brackets = { enabled = true } },
       documentation = {
         auto_show = true,
-        auto_show_delay_ms = 300,
+        auto_show_delay_ms = 200,
         window = { border = "rounded" },
       },
       menu = {
         border = "rounded",
         draw = {
-          columns = {
-            { "label", "label_description", gap = 1 },
-            { "kind_icon", "kind" },
-          },
+          columns = { { "kind_icon" }, { "label", "label_description", gap = 1 }, { "source_name" } },
         },
       },
-      accept = {
-        auto_brackets = { enabled = true },
-      },
+    },
+    signature = {
+      enabled = true,
+      window = { border = "rounded" },
     },
   },
 }

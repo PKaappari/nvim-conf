@@ -1,143 +1,106 @@
 return {
   {
-    "folke/lazydev.nvim",
-    ft = "lua",
+    "williamboman/mason.nvim",
+    cmd = "Mason",
+    opts = {},
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
     opts = {
-      library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } },
-    },
-  },
-  { "Bilal2453/luvit-meta", lazy = true },
-  -- eslint_d code actions
-  {
-    "jay-babu/mason-null-ls.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = { "nvimtools/none-ls.nvim", "nvimtools/none-ls-extras.nvim" },
-    config = function()
-      require("mason-null-ls").setup({
-        ensure_installed = { "stylua", "eslint_d", "prettierd" },
-        automatic_installation = true,
-      })
-      require("null-ls").setup({
-        sources = { require("none-ls.code_actions.eslint_d") },
-      })
-    end,
-  },
-
-  -- LSP
-  {
-    "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      { "mason-org/mason.nvim", opts = {} },
-      {
-        "mason-org/mason-lspconfig.nvim",
-        opts = {
-          ensure_installed = {
-            "lua_ls",
-            "jsonls",
-            "docker_compose_language_service",
-            "cssls",
-            "pyright",
-            "ruff",
-            "bashls",
-          },
-        },
+      ensure_installed = {
+        "ts_ls",
+        "eslint",
+        "pyright",
+        "ruff",
+        "lua_ls",
+        "jsonls",
+        "cssls",
       },
-      { "b0o/SchemaStore.nvim" },
     },
-    config = function()
+    config = function(_, opts)
+      require("mason-lspconfig").setup(opts)
+
+      -- LSP keymaps on attach
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
         callback = function(event)
-          local function map(keys, func, desc, mode)
-            vim.keymap.set(mode or "n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+          local map = function(keys, func, desc)
+            vim.keymap.set("n", keys, func, { buffer = event.buf, desc = desc })
           end
 
-          map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-          map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
-          map("<leader>dh", vim.lsp.buf.document_highlight, "[D]ocument [H]ighlight")
-
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client:supports_method("textDocument/documentHighlight", event.buf) then
-            local group = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
-            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-              buffer = event.buf,
-              group = group,
-              callback = vim.lsp.buf.document_highlight,
-            })
-            vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-              buffer = event.buf,
-              group = group,
-              callback = vim.lsp.buf.clear_references,
-            })
-            vim.api.nvim_create_autocmd("LspDetach", {
-              group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
-              callback = function(e)
-                vim.lsp.buf.clear_references()
-                vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = e.buf })
-              end,
-            })
-          end
+          map("<leader>ld", function()
+            Snacks.picker.lsp_definitions()
+          end, "Go to definition")
+          map("<leader>lD", vim.lsp.buf.declaration, "Go to declaration")
+          map("<leader>lr", function()
+            Snacks.picker.lsp_references()
+          end, "References")
+          map("<leader>li", function()
+            Snacks.picker.lsp_implementations()
+          end, "Implementation")
+          map("<leader>lt", function()
+            Snacks.picker.lsp_type_definitions()
+          end, "Type definition")
+          map("rn", vim.lsp.buf.rename, "Rename")
+          map("<leader>la", vim.lsp.buf.code_action, "Code action")
+          map("<leader>lh", vim.lsp.buf.hover, "Hover")
+          map("<leader>ls", vim.lsp.buf.signature_help, "Signature help")
+          map("K", vim.lsp.buf.hover, "Hover")
+          map("gd", function()
+            Snacks.picker.lsp_definitions()
+          end, "Go to definition")
+          map("gr", function()
+            Snacks.picker.lsp_references()
+          end, "References")
         end,
       })
 
-      -- Server configurations (merged with defaults from nvim-lspconfig)
-      vim.lsp.config.lua_ls = {
-        settings = {
-          Lua = {
-            completion = { callSnippet = "Replace" },
-            diagnostics = { globals = { "vim" } },
-            workspace = {
-              library = {
-                vim.env.VIMRUNTIME,
-              },
+      -- Capabilities for blink.cmp
+      local capabilities = require("blink.cmp").get_lsp_capabilities()
+
+      -- Configure servers with vim.lsp.config
+      local servers = {
+        ts_ls = {},
+        eslint = {},
+        pyright = {
+          settings = {
+            pyright = { disableOrganizeImports = true },
+            python = {
+              analysis = { typeCheckingMode = "basic" },
             },
           },
         },
-      }
-
-      vim.lsp.config.jsonls = {
-        settings = {
-          json = {
-            schemas = require("schemastore").json.schemas(),
-            validate = { enable = true },
-            format = { enable = true },
-          },
-        },
-      }
-
-      vim.lsp.config.cssls = {
-        settings = {
-          css = { validate = true, lint = { unknownAtRules = "ignore" } },
-          less = { validate = true, lint = { unknownAtRules = "ignore" } },
-          scss = { validate = true, lint = { unknownAtRules = "ignore" } },
-        },
-      }
-
-      vim.lsp.config.pyright = {
-        settings = {
-          pyright = {
-            disableOrganizeImports = true,
-          },
-          python = {
-            analysis = {
-              autoImportCompletions = true,
-              diagnosticMode = "workspace",
+        ruff = {},
+        lua_ls = {
+          settings = {
+            Lua = {
+              workspace = { checkThirdParty = false },
+              telemetry = { enable = false },
             },
           },
         },
+        jsonls = {},
+        cssls = {},
+        tailwindcss = {},
       }
 
-      -- Servers with no custom config use defaults from nvim-lspconfig
-      vim.lsp.enable({
-        "lua_ls",
-        "jsonls",
-        "docker_compose_language_service",
-        "cssls",
-        "pyright",
-        "ruff",
-        "bashls",
-      })
+      for server, config in pairs(servers) do
+        config.capabilities = capabilities
+        vim.lsp.config(server, config)
+      end
+
+      vim.lsp.enable(vim.tbl_keys(servers))
     end,
+  },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua",
+    opts = {
+      library = {
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
   },
 }
